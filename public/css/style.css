@@ -1,0 +1,49 @@
+.container1 {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      width: 360px;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #6d28d9;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      transition: all 0.3s ease;
+      font-size: 15px;
+    }
+    input:focus {
+      border-color: #9333ea;
+      outline: none;
+      box-shadow: 0 0 5px rgba(147,51,234,0.5);
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 8px;
+      border: none;
+      background: #9333ea;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #6d28d9;
+      transform: translateY(-2px);
+    }
+    
+   
+  

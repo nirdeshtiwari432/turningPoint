@@ -1,0 +1,25 @@
+{
+  "name": "librabry",
+  "version": "1.0.0",
+  "description": "\"# Turning Point Project\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nirdeshtiwari432/turningPoint.git"
+  },
+  "author": "nirdesh kunal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nirdeshtiwari432/turningPoint/issues"
+  },
+  "homepage": "https://github.com/nirdeshtiwari432/turningPoint#readme",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "ejs-mate": "^4.0.0",
+    "express": "^5.1.0",
+    "mongoosh": "^0.0.7"
+  }
+}
