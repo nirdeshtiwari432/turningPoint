@@ -1,4 +1,96 @@
 <% layout("/layouts/boilerplate")%>
-  <h1>Welcome to the Library</h1>
-  <div class="btn-container">
+ 
+<body>
+    <!-- hero -->
+    <section class="hero">
+      <div class="hero-left">
+        <h1>Study in focus — at Turning Point Library</h1>
+        <p class="tagline">Modern study cubicles, peaceful atmosphere, and membership plans that fit students and professionals.</p>
+
+        <div style="display:flex;gap:16px;flex-wrap:wrap;">
+          <a class="btn primary" href="register.html">Get Membership</a>
+          <a class="btn ghost" href="#cubicles">Book a Cubicle</a>
+        </div>
+
+        <div class="stats">
+          <div class="stat-item">📚 <strong>2000+</strong> Books</div>
+          <div class="stat-item">🪑 <strong>40</strong> Cubicles</div>
+          <div class="stat-item">⭐ <strong>4.8</strong> Rating</div>
+        </div>
+
+        <div class="owner-line">Owner: Prince Lodhi • <span style="color:#f3f4f6; font-weight:600">Empowering Minds, Building Futures</span></div>
+      </div>
+
+      <div class="hero-card">
+        <!-- use one of your images here -->
+        <img src="WhatsApp Image 2025-09-22 at 12.47.31.jpeg" alt="library cubicles">
+        <div class="hero-overlay">
+          <div class="card-text">Study Cubicles</div>
+          <div class="card-sub">Comfortable, private desks with reading light & power</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- features -->
+    <section id="features" style="margin-top:8px;">
+      <div class="grid">
+        <div class="card">
+          <h3>Quiet Study Zones</h3>
+          <p>Individual cubicles with task lighting — ideal for focused study & coding sessions.</p>
+        </div>
+        <div class="card">
+          <h3>Flexible Plans</h3>
+          <p>1 month and 3 month plans with discounted fees for students.</p>
+        </div>
+        <div class="card">
+          <h3>Fast Wi-Fi & Power</h3>
+          <p>High speed internet and individual power sockets at every desk.</p>
+        </div>
+      </div>
+
+      <!-- cubicle booking cards -->
+      <h2 id="cubicles" style="color:white;margin-top:20px;">Available Cubicles</h2>
+      <div class="cubicle-grid" style="margin-bottom:12px;">
+        <!-- cubicle 1 -->
+        <div class="cubicle">
+          <img class="thumb" src="WhatsApp Image 2025-09-22 at 12.47.26.jpeg" alt="cubicle 1">
+          <div class="info">
+            <h4>Cubicle #12</h4>
+            <p>Private desk with lamp, plug point and shelf. Perfect for 2–3 hour sessions.</p>
+          </div>
+          <div class="actions">
+            <button class="small-btn book" onclick="alert('Booking flow — replace with your code')">Book Now</button>
+            <button class="small-btn info" onclick="alert('Details: Lamp, Socket, Quiet Zone')">Details</button>
+          </div>
+        </div>
+
+        <!-- cubicle 2 -->
+        <div class="cubicle">
+          <img class="thumb" src="WhatsApp Image 2025-09-22 at 12.47.28 (1).jpeg" alt="cubicle 2">
+          <div class="info">
+            <h4>Cubicle #25</h4>
+            <p>Window-facing cubicle with spacious desk area and comfortable chair.</p>
+          </div>
+          <div class="actions">
+            <button class="small-btn book" onclick="alert('Booking flow — replace with your code')">Book Now</button>
+            <button class="small-btn info" onclick="alert('Details: Spacious Desk, Quiet')">Details</button>
+          </div>
+        </div>
+
+        <!-- cubicle 3 -->
+        <div class="cubicle">
+          <img class="thumb" src="WhatsApp Image 2025-09-22 at 12.47.31.jpeg" alt="cubicle 3">
+          <div class="info">
+            <h4>Cubicle #05</h4>
+            <p>Cozy corner cubicle with soft lighting — great for late-night study.</p>
+          </div>
+          <div class="actions">
+            <button class="small-btn book" onclick="alert('Booking flow — replace with your code')">Book Now</button>
+            <button class="small-btn info" onclick="alert('Details: Lamp, Socket')">Details</button>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
+</body>
+</html>

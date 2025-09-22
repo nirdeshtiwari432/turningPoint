@@ -21,11 +21,11 @@ app.get("/",(req,res)=>{
 })
 
 app.get("/pricing",(req,res)=>{
-    res.sendFile(path.join(__dirname, "public/html/pricing.html"));
+    res.render("pricing.ejs")
 })
 
 app.get("/privacy",(req,res)=>{
-    
+
     res.sendFile(path.join(__dirname, "public/html/privacy.html"));
 })
 

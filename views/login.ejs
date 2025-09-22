@@ -1,110 +1,13 @@
 <% layout("/layouts/boilerplate")%>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Library Login</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #9333ea, #6d28d9); /* Purple gradient */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-    }
-    .container {
-      background: #fff;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-      width: 360px;
-      animation: fadeIn 0.8s ease-in-out;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 25px;
-      font-size: 22px;
-      font-weight: bold;
-      color: #6d28d9;
-    }
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 8px;
-      border: 1px solid #d1d5db;
-      transition: all 0.3s ease;
-      font-size: 15px;
-    }
-    input:focus {
-      border-color: #9333ea;
-      outline: none;
-      box-shadow: 0 0 5px rgba(147,51,234,0.5);
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 12px;
-      border-radius: 8px;
-      border: none;
-      background: #9333ea;
-      color: white;
-      font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #6d28d9;
-      transform: translateY(-2px);
-    }
-    .message {
-      text-align: center;
-      margin-top: 15px;
-      font-size: 14px;
-    }
-    a {
-      color: #9333ea;
-      text-decoration: none;
-      font-weight: 600;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-  </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container1">
     <h2>📚 Library Login</h2>
     <form id="loginForm">
-      <input type="text" id="username" placeholder="User Name" required>
-      <input type="password" id="password" placeholder="Password" required>
-      <input type="text" id="phone" placeholder="Phone Number" required>
+      <input type="text" id="username" placeholder="Phone Number" required><br><br>
+      <input type="password" id="password" placeholder="Password" required><br><br>
+  
       
       <button type="submit">Login</button>
-    </form>
-    <p class="message" id="msg"></p>
-    <p class="message">New user? <a href="register.html">Register here</a></p>
+    </form> 
   </div>
-
-  <script>
-    const form = document.getElementById("loginForm");
-    const msg = document.getElementById("msg");
-
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const username = document.getElementById("username").value;
-      msg.textContent = `✅ Welcome back, ${username}!`;
-      msg.style.color = "green";
-      form.reset();
-    });
-  </script>
-</body>
-</html>
