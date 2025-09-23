@@ -1,1 +1,79 @@
-<% layout("/layouts/boilerplate")%>
+<% layout("/admin/navbar") %>
+  <!-- Add Member Form -->
+  <div class="container my-4">
+    <div class="card shadow">
+      <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Add New Member</h4>
+      </div>
+      <div class="card-body">
+        <form method = "POST" action="/admin/new">
+          <!-- Name -->
+          <div class="mb-3">
+            <label for="name" class="form-label">Full Name</label>
+            <input type="text" class="form-control" name="member[name]" placeholder="Enter member's name" required>
+          </div>
+
+          <!-- Email -->
+          <div class="mb-3">
+            <label for="email" class="form-label">Email (optional)</label>
+            <input type="email" class="form-control" name="member[email]" placeholder="Enter member's email">
+          </div>
+
+          <!-- Phone Number -->
+          <div class="mb-3">
+            <label for="number" class="form-label">Phone Number</label>
+            <input type="number" class="form-control" name="member[number]" placeholder="Enter phone number" required>
+          </div>
+
+
+          <!-- Membership Type -->
+          <div class="mb-3">
+            <label for="membershipType" class="form-label">Membership Type</label>
+            <select class="form-select" name="member[membershipType]" required>
+              <option value="" selected disabled>Select Type</option>
+              <option value="reserved">Reserved</option>
+              <option value="non_reserved">Non-Reserved</option>
+            </select>
+          </div>
+
+          <!-- Plan -->
+          <div class="mb-3">
+            <label for="plan" class="form-label">Plan</label>
+            <select class="form-select" name="member[plan]" required>
+              <option value="" selected disabled>Select Plan</option>
+              <option value="full_time">Full Time</option>
+              <option value="part_time">Part Time</option>
+            </select>
+          </div>
+
+          <!-- Shift -->
+          <div class="mb-3">
+            <label for="shift" class="form-label">Shift (for Part-Time)</label>
+            <select class="form-select" name="member[shift]">
+              <option value="" selected disabled>Select Shift</option>
+              <option value="morning">Morning</option>
+              <option value="night">Night</option>
+            </select>
+          </div>
+
+          <!-- Password -->
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" name="member[password]" placeholder="Enter password" required>
+          </div>
+
+          <!-- Fees -->
+          <div class="mb-3">
+            <label for="fees" class="form-label">Fees</label>
+            <input type="number" class="form-control" name="member[fees]" placeholder="Enter fees amount" required>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-success w-100">Add Member</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -3,7 +3,12 @@ const app = express();
 const db = require("./db");
 const {User,AvailableSeat,Session, Admin} = require("./schema");
 const path = require("path");
-const ejsMate = require("ejs-mate")
+const ejsMate = require("ejs-mate");
+const { default: mongoose } = require("./db");
+
+
+app.use(express.urlencoded({extended :true}));
+app.use(express.json());
 
 
 app.set("view engine","ejs");
@@ -12,6 +17,11 @@ app.set("views",path.join(__dirname,"views"));
 app.use(express.static(path.join(__dirname,"/public")))
 app.use(express.urlencoded({extended:true}))
 app.engine("ejs",ejsMate)
+
+//helper function
+const asyncHandler = fn => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
 
 
 //main website
@@ -44,27 +54,34 @@ app.post("/admin/login",(req,res)=>{
 })
 
 app.get("/admin/dashboard",(req,res)=>{
-    //admin dashboard
+    res.render("./admin/dashboard.ejs")
 })
 
 app.get("/admin/new",(req,res)=>{
     //add new member in library
+    console.log("new")
     res.render("./admin/new.ejs")
 })
 
 app.post("/admin/new",(req,res)=>{
-    //save new member in db
+    let member = req.body.member;
+    console.log(member)
 
     
 })
 
-app.get("/admin/seat",(req,res)=>{
-    //show all seat detail
-})
+//show seat details
+app.get("/admin/seats",asyncHandler(async(req,res)=>{
+    const seats = await AvailableSeat.find({}).populate("bookedBy");;
+    res.render("admin/seats.ejs",{seats});
+}));
 
-app.get("/admin/users",(req,res)=>{
-    //show all user detail in table format
-})
+//show member details
+app.get("/admin/members",asyncHandler(async(req,res)=>{
+    const members = await User.find({}).populate("seat");;
+    console.log(members)
+    res.render("admin/members.ejs",{members})
+}))
 
 app.get("/admin/users/:id",(req,res)=>{
     //user detail in particular

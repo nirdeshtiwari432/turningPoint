@@ -14,22 +14,34 @@ const user = new mongoose.Schema({
         type:Number,
         required:true,
     },
-    seatNo:{
-        type:Number,
-        required:true,
+    seat: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "AvailableSeat",
+        required: true
     },
-    fees:{
-        type:Number,
-        required:true,
+    membershipType: {
+        type: String,
+        enum: ["reserved", "non_reserved"],
+        required: true
+    },
+    plan: {
+        type: String,
+        enum: ["full_time", "part_time"],
+        required: true
+    },
+    shift: {
+        type: String,
+        enum: ["morning", "night","full"], // null if full_time
+        default: "full"
     },
     password:{
         type:String,
         required:true
     },
-    timing:{
-        type:String,
-        required:true
-    }
+    fees: {
+         type: Number, 
+         required: true 
+        }
     
 })
 
@@ -77,9 +89,11 @@ const availableSeat = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId, 
     ref: "User", 
     default: null },
-  timing: { 
-    type: String
- }
+    
+    timing: { 
+        type: String, 
+        enum: ["full_time", "morning", "night"], 
+        default: "full_time" }
 })
 
 
