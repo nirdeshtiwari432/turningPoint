@@ -1,0 +1,90 @@
+.signup-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: #f8f9fa;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.signup-container {
+  background: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.signup-container h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.file-upload {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.file-upload .link {
+  color: #007bff;
+  cursor: pointer;
+}
+
+.file-upload .hint {
+  font-size: 12px;
+  color: #999;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+.btn {
+  padding: 14px;
+  border: none;
+  border-radius: 6px;
+  margin-top: 20px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+}
+
+.btn.primary {
+  background: #007bff;
+  color: #fff;
+}
