@@ -1,0 +1,58 @@
+/* Seat.css */
+
+.seat-page {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.seat-page h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #1e40af;
+}
+
+.search-bar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.search-bar input {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.seat-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.seat-table th,
+.seat-table td {
+  padding: 0.75rem 1rem;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.seat-table th {
+  background-color: #1e40af;
+  color: white;
+}
+
+.seat-table tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.seat-table tr:hover {
+  background-color: #e0e7ff;
+  transition: background-color 0.3s;
+}

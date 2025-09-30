@@ -1,0 +1,7 @@
+.App {
+  text-align: left;
+}
+
+a, button {
+  transition: all 0.3s ease;
+}
