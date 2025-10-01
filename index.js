@@ -3,6 +3,14 @@ const path = require("path");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./error");
 const app = express();
+const cors = require("cors");
+
+app.use(
+  cors({
+    origin: "http://localhost:5173", // React dev server
+    credentials: true,               // allow cookies/sessions
+  })
+);
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
@@ -24,7 +32,6 @@ require("./middleware/passport")(app);
 const userRoutes = require("./routes/user");
 const adminRoutes = require("./routes/admin");
 const mainRoutes = require("./routes/main");
-
 app.use("/", mainRoutes);
 app.use("/user", userRoutes);
 app.use("/admin", adminRoutes);
@@ -40,6 +47,6 @@ app.use((err, req, res, next) => {
   res.status(status).send(message);
 });
 
-app.listen(8080, () => {
-  console.log("http://localhost:8080");
+app.listen(5000, () => {
+  console.log("http://localhost:5000");
 });

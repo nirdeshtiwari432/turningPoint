@@ -18,6 +18,7 @@
   "homepage": "https://github.com/nirdeshtiwari432/turningPoint#readme",
   "dependencies": {
     "connect-flash": "^0.1.1",
+    "cors": "^2.8.5",
     "ejs": "^3.1.10",
     "ejs-mate": "^4.0.0",
     "express": "^5.1.0",
