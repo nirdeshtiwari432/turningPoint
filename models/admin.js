@@ -3,9 +3,14 @@ const passportLocalMongoose = require("passport-local-mongoose");
 
 const adminSchema = new mongoose.Schema({
   name: String,
-  Number: Number
+  mobile: {
+    type: String, // better to use String for phone numbers
+    required: true,
+    unique: true
+  }
 });
 
-adminSchema.plugin(passportLocalMongoose);
+// Configure passport-local-mongoose to use "mobile" as the username field
+adminSchema.plugin(passportLocalMongoose, { usernameField: "mobile" });
 
 module.exports = mongoose.model("Admin", adminSchema);

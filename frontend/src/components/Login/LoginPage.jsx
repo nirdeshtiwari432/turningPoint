@@ -2,29 +2,58 @@ import React, { useState } from "react";
 import "./login.css";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState(""); // changed from email
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login Data:", { email, password });
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("http://localhost:5000/admin/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include", // for passport sessions/cookies
+        body: JSON.stringify({ mobile, password }) // send mobile instead of username
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        alert(data.message); // or redirect
+        window.location.href = "/dashboard"; 
+      } else {
+        setError(data.message || "Login failed");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong, please try again.");
+    }
+
+    setLoading(false);
   };
 
   return (
     <div className="login-page">
       <div className="login-container">
-        <h2>Welcome Back</h2>
+        <h2>Welcome Back Admin</h2>
         <p className="subtitle">Login to continue your journey.</p>
 
         <form onSubmit={handleSubmit}>
-          {/* Email */}
+          {/* Mobile */}
           <div className="form-group">
-            <label>Email</label>
+            <label>Mobile Number</label>
             <input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              placeholder="Enter your mobile number"
+              value={mobile}
+              onChange={(e) => setMobile(e.target.value)}
+              required
             />
           </div>
 
@@ -36,11 +65,14 @@ const LoginPage = () => {
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </div>
 
-          <button type="submit" className="btn primary">
-            Login
+          {error && <p className="error">{error}</p>}
+
+          <button type="submit" className="btn primary" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 

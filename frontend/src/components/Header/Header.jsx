@@ -9,7 +9,7 @@ const Header = () => {
         <div className="logo">
           <h2>Turning Point</h2>
         </div>
-        <nav className="nav">
+        <nav className="nav" >
           <ul>
             <li><Link to="/">Home</Link></li>
             <li><Link to="/about">About</Link></li>
@@ -21,6 +21,7 @@ const Header = () => {
           <button className="join-btn">Join Now</button>
         </Link>
       </div>
+      
     </header>
   );
 };
