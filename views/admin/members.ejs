@@ -16,7 +16,7 @@
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a class="nav-link" href="/admin/seats">Seat Details</a></li>
           <li class="nav-item"><a class="nav-link" href="/admin/members">Member Details</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Logout</a></li>
+          <li class="nav-item"><a class="nav-link" href="/admin/logout">Logout</a></li>
         </ul>
       </div>
     </div>
@@ -31,26 +31,28 @@
           <thead class="table-dark">
             <tr>
               <th>Name</th>
-              <th>Email</th>
               <th>Number</th>
               <th>Seat</th>
-              <th>Membership</th>
-              <th>Plan</th>
-              <th>Shift</th>
               <th>Fees</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Full Details</th>
             </tr>
           </thead>
           <tbody>
             <% for (let member of members) {%>
             <tr>
                <td><%= member.name %></td>
-               <td><%= member.email %></td>
                <td><%= member.number %></td>
                <td><%= member.seat.seatNo %></td>
-               <td><%= member.membershipType %></td>
-               <td><%= member.plan %></td>
-               <td><%= member.shift %></td>
                <td><%= member.fees %></td>
+               <td><%= member.startDate ? member.startDate.toLocaleDateString("en-GB") : "-" %></td>
+               <td><%= member.endDate ? member.endDate.toLocaleDateString("en-GB") : "-" %></td>
+               <td>
+                <form action="/admin/users/<%= member._id%>">
+                  <button>Show</button>
+                </form>
+               </td>
             </tr>
             <%}%>
             

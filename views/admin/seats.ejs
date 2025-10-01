@@ -2,8 +2,18 @@
 
 <div class="container my-4">
   <div class="card">
-    <div class="card-header bg-primary text-white">
-      Seat Details
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <span>Seat Details</span>
+      <form method="GET" action="/admin/seats" class="d-flex">
+        <select name="filter" class="form-select me-2">
+          <option value="">All</option>
+          <option value="booked" <%= filter === "booked" ? "selected" : "" %>>Booked</option>
+          <option value="notBooked" <%= filter === "notBooked" ? "selected" : "" %>>Not Booked</option>
+          <option value="registered" <%= filter === "registered" ? "selected" : "" %>>Registered</option>
+          <option value="notRegistered" <%= filter === "notRegistered" ? "selected" : "" %>>Not Registered</option>
+        </select>
+        <button type="submit" class="btn btn-light">Filter</button>
+      </form>
     </div>
     <div class="card-body">
       <table class="table table-bordered table-striped">
@@ -13,6 +23,7 @@
             <th>Is Booked</th>
             <th>Booked By</th>
             <th>Timing</th>
+            <th>Book</th>
           </tr>
         </thead>
         <tbody>
@@ -28,6 +39,11 @@
                 <% } %>
               </td>
               <td><%= seat.timing ? seat.timing.replace("_", " ") : "-" %></td>
+              <td>
+                <form action="/admin/new/<%= seat._id %>/<%=seat.seatNo %>">
+                 <button class="btn btn-primary" action = "/admin/new">Book</button>
+                </form>
+              </td>
             </tr>
           <% }) %>
         </tbody>

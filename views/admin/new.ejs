@@ -7,6 +7,11 @@
       </div>
       <div class="card-body">
         <form method = "POST" action="/admin/new">
+          <!-- UserName -->
+          <div class="mb-3">
+            <label for="name" class="form-label">User Name</label>
+            <input type="text" class="form-control" name="member[username]" placeholder="Enter member's name" required>
+          </div>
           <!-- Name -->
           <div class="mb-3">
             <label for="name" class="form-label">Full Name</label>
@@ -59,7 +64,7 @@
           <!-- Password -->
           <div class="mb-3">
             <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" name="member[password]" placeholder="Enter password" required>
+            <input type="password" class="form-control" name="pass[password]" placeholder="Enter password" required>
           </div>
 
           <!-- Fees -->
@@ -67,6 +72,24 @@
             <label for="fees" class="form-label">Fees</label>
             <input type="number" class="form-control" name="member[fees]" placeholder="Enter fees amount" required>
           </div>
+          <!-- seat-->
+          <div class="mb-3" hidden>
+            <label for="name" class="form-label">Seat</label>
+            <input type="text" class="form-control" name="member[seat]" value="<%= id %>" required>
+          </div>
+          <div class="mb-3">
+            <label for="name" class="form-label">Seat</label>
+            <input type="text" class="form-control"  value="<%= seatNo %>"  readonly required>
+          </div>
+          <div class="mb-3">
+            <label for="fees" class="form-label">Start Date</label>
+            <input type="Date" class="form-control" name="member[startDate]" required>
+          </div>
+            <div class="mb-3">
+            <label for="fees" class="form-label">End Date</label>
+            <input type="Date" class="form-control" name="member[endDate]" required>
+          </div>
+          
 
           <!-- Submit Button -->
           <button type="submit" class="btn btn-success w-100">Add Member</button>

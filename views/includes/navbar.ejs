@@ -12,12 +12,16 @@
         <li class="nav-item">
           <a class="nav-link" href="/pricing">Pricing</a>
         </li>
+        <% if (!currentUser && !currentAdmin) {%>
         <li class="nav-item">
           <a class="nav-link" href="/user/login">User Login</a>
         </li>
+        <%}%>
+        <% if (!currentAdmin && !currentUser){%>
         <li class="nav-item">
           <a class="nav-link" href="/admin/login">Admin Login</a>
         </li>
+        <% } %>
       </ul>
       <span class="navbar-text">
        

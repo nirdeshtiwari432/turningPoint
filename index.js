@@ -1,29 +1,45 @@
 const express = require("express");
-const app = express();
 const path = require("path");
 const ejsMate = require("ejs-mate");
-const user = require("./routes/user")
-const admin = require("./routes/admin")
-const main = require("./routes/main");
+const ExpressError = require("./error");
+const app = express();
 
-
-app.use(express.urlencoded({extended :true}));
+// Middleware
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
 
+// View engine
+app.engine("ejs", ejsMate);
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
-app.set("view engine","ejs");
-app.set("views",path.join(__dirname,"views"));
-
-app.use(express.static(path.join(__dirname,"/public")))
-app.use(express.urlencoded({extended:true}))
-app.engine("ejs",ejsMate)
-
-app.use("/",main)
-app.use("/user",user);
-app.use("/admin",admin);
+// Custom middlewares
+require("./middleware/session")(app);
+require("./middleware/passport")(app);
 
 
 
-app.listen(8080,()=>{
-    console.log("listen..")
-})
+// Routes
+const userRoutes = require("./routes/user");
+const adminRoutes = require("./routes/admin");
+const mainRoutes = require("./routes/main");
+
+app.use("/", mainRoutes);
+app.use("/user", userRoutes);
+app.use("/admin", adminRoutes);
+
+// 404 handler
+app.use((req, res, next) => {
+  next(new ExpressError(404, "Page Not Found"));
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  const { status = 500, message = "Something went wrong" } = err;
+  res.status(status).send(message);
+});
+
+app.listen(8080, () => {
+  console.log("http://localhost:8080");
+});
