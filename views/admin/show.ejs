@@ -1,0 +1,54 @@
+<% layout("/admin/navbar") %>
+
+<div class="container my-5">
+  <div class="card shadow-lg">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">User Details</h2>
+    </div>
+    <div class="card-body">
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">Name:</div>
+        <div class="col-sm-8"><%= user.name %></div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">Email:</div>
+        <div class="col-sm-8"><%= user.email || "-" %></div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">Number:</div>
+        <div class="col-sm-8"><%= user.number %></div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">Seat:</div>
+        <div class="col-sm-8"><%= user.seat ? user.seat.seatNo : "N/A" %></div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">Membership:</div>
+        <div class="col-sm-8"><%= user.membershipType %></div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">Plan:</div>
+        <div class="col-sm-8"><%= user.plan %></div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">Shift:</div>
+        <div class="col-sm-8"><%= user.shift %></div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">Fees:</div>
+        <div class="col-sm-8">₹<%= user.fees %></div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">Start Date:</div>
+        <div class="col-sm-8"><%= user.startDate ? user.startDate.toLocaleDateString("en-GB") : "-" %></div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-sm-4 fw-bold">End Date:</div>
+        <div class="col-sm-8"><%= user.endDate ? user.endDate.toLocaleDateString("en-GB") : "-" %></div>
+      </div>
+    </div>
+    <div class="card-footer text-end">
+      <a href="/admin/user/:id/edit" class="btn btn-secondary">Back to Members</a>
+    </div>
+  </div>
+</div>
