@@ -6,11 +6,16 @@ import SignupPage from "./components/Signup/SignupPage";
 import LoginPage from "./components/Login/LoginPage"; // ✅ use full-page login
 import MembershipPage from "./components/Membership/MembershipPage";
 import AboutPage from "./components/About/AboutPage";
+import ProfilePage from "./components/Profile/ProfilePage";
+import Footer from './components/Footer/Footer';
+import Seat from "./components/Dashboard/Seat";   // your Seat component
+import Alerts from "./components/Alert/Alert"; // your Alerts component
 import AdminDashboard  from "./components/Dashboard/AdminDashboard";
 import MembersPage from "./components/Dashboard/MembersPage";
 import SeatsPage from "./components/Dashboard/SeatsPage";
-
-
+import EditMemberPage from "./components/Dashboard/edit.jsx";
+import MemberDetailsPage from "./components/Dashboard/MemberDetailsPage.jsx";
+import ProtectedRoute from "./components/Dashboard/ProtectedRoute.jsx";
 function App() {
   return (
     <>
@@ -20,12 +25,18 @@ function App() {
         <Route path="/about" element={<AboutPage />} /> 
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} /> 
-        <Route path="/dashboard" element={<AdminDashboard />} />
         <Route path="/membership" element={<MembershipPage />} /> {/* ✅ New */}
-        <Route path="/members" element={<MembersPage />} />
-        <Route path="/seats" element={<SeatsPage />} />
-
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/seats" element={<ProtectedRoute><Seat /></ProtectedRoute>} />
+        <Route path="/alerts" element={<Alerts />} />
+        <Route path="/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/members" element={<ProtectedRoute><MembersPage /></ProtectedRoute>} />
+        <Route path="/seats" element={<ProtectedRoute><SeatsPage /></ProtectedRoute>} />
+        <Route path="/members/:id" element={<ProtectedRoute><MemberDetailsPage /></ProtectedRoute>} />
+        <Route path="/members/:id/edit" element={<ProtectedRoute><EditMemberPage /></ProtectedRoute>} />
       </Routes>
+        <Footer />
+
     </>
   );
 }

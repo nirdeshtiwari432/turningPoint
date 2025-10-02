@@ -8,6 +8,8 @@ const SignupPage = () => {
     password: "",
     contact: "",
     studyingFor: "",
+    aadhar: "",   // ✅ New
+    address: "",  // ✅ New
     seatNumber: "",
     seatType: "",
     timing: "",
@@ -83,6 +85,31 @@ const SignupPage = () => {
                 value={form.contact}
                 onChange={handleChange}
                 maxLength={10}
+              />
+            </div>
+
+            {/* ✅ Aadhar Number (optional) */}
+            <div className="form-group">
+              <label>Aadhar Number (Optional)</label>
+              <input
+                type="text"
+                name="aadhar"
+                placeholder="Enter Aadhar number"
+                value={form.aadhar}
+                onChange={handleChange}
+                maxLength={12}
+              />
+            </div>
+
+            {/* ✅ Address (optional) */}
+            <div className="form-group">
+              <label>Address (Optional)</label>
+              <textarea
+                name="address"
+                placeholder="Enter your address"
+                value={form.address}
+                onChange={handleChange}
+                rows="3"
               />
             </div>
 

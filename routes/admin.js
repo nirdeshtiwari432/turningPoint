@@ -14,6 +14,11 @@ const asyncHandler = fn => (req, res, next) => {
 // Admin Authentication
 // =========================
 
+let check  =(req,res,next)=>{
+   console.log("check")
+   next()
+}
+
 // Admin login (API)
 router.post(
   "/login",
@@ -30,7 +35,7 @@ router.get("/dashboard", isAdmin, asyncHandler(async (req, res) => {
 }));
 
 // Admin logout
-router.get("/logout", (req, res, next) => {
+router.get("/logout", check,(req, res, next) => {
   try {
     req.logout(err => {
       if (err) return next(err);

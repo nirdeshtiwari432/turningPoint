@@ -1,0 +1,33 @@
+.alerts-page {
+  max-width: 900px;
+  margin: 120px auto 50px auto;
+  padding: 0 20px;
+  font-family: Arial, sans-serif;
+}
+
+.alerts-page h2 {
+  text-align: center;
+  color: #1e40af;
+  margin-bottom: 20px;
+}
+
+.alerts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.alert-card {
+  background: #fee2e2;
+  border-left: 5px solid #f87171;
+  padding: 15px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #b91c1c;
+}
+
+.no-alerts {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #4b5563;
+}
