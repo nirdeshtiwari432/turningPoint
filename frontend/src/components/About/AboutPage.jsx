@@ -1,7 +1,7 @@
 import React from "react";
 import "./AboutPage.css";
-import { FaWifi, FaSnowflake, FaPlug, FaBook, FaUtensils } from "react-icons/fa";
-import { MdMeetingRoom } from "react-icons/md";
+import { FaWifi, FaPlug, FaBook, FaTint, FaUtensils, FaLightbulb, FaVideo } from "react-icons/fa";
+import { MdMeetingRoom, MdOutlineWc } from "react-icons/md";
 
 const AboutPage = () => {
   const amenities = [
@@ -11,44 +11,59 @@ const AboutPage = () => {
       desc: "Stay connected with our fast and reliable internet.",
     },
     {
-      icon: <FaSnowflake size={30} color="#2b6cb0" />,
-      title: "Air Conditioning",
-      desc: "Comfortable study environment with optimal temperature.",
-    },
-    {
       icon: <FaPlug size={30} color="#2b6cb0" />,
       title: "Charging Points",
-      desc: "Keep your devices charged and ready.",
+      desc: "Keep your devices fully charged and ready to go.",
     },
     {
       icon: <MdMeetingRoom size={30} color="#2b6cb0" />,
       title: "Study Cabins",
-      desc: "Private and quiet spaces for focused study.",
+      desc: "Quiet and private cabins for distraction-free study.",
+    },
+    {
+      icon: <FaLightbulb size={30} color="#2b6cb0" />,
+      title: "Personal Study Light",
+      desc: "Each cabin is equipped with its own study light.",
+    },
+    {
+      icon: <FaTint size={30} color="#2b6cb0" />,
+      title: "Water Facility",
+      desc: "Clean and safe drinking water always available.",
+    },
+    {
+      icon: <MdOutlineWc size={30} color="#2b6cb0" />,
+      title: "Washroom Available",
+      desc: "Convenient and hygienic washroom facilities.",
     },
     {
       icon: <FaBook size={30} color="#2b6cb0" />,
       title: "Extensive Book Collection",
-      desc: "Access a wide range of academic resources.",
+      desc: "Access a wide range of academic and reference books.",
+    },
+    {
+      icon: <FaVideo size={30} color="#2b6cb0" />,
+      title: "Camera Security",
+      desc: "24/7 CCTV monitoring for a safe environment.",
     },
     {
       icon: <FaUtensils size={30} color="#2b6cb0" />,
-      title: "On-Site Canteen",
-      desc: "Enjoy convenient meals and snacks at our canteen.",
+      title: "Separate Food Room",
+      desc: "Dedicated space for meals away from study areas.",
     },
   ];
 
   return (
     <div className="about-page">
       <div className="about-header">
-        <h1>Welcome to StudySpace</h1>
+        <h1>Welcome to Turning Point Library </h1>
         <p>
-          Find the perfect study spot with all the amenities you need. 
-          Explore our facilities and book your space today.
+          A peaceful environment designed for serious learners. 
+          Explore our facilities that ensure comfort, safety, and productivity.
         </p>
       </div>
 
       <div className="amenities-section">
-        <h2>Our Amenities</h2>
+        <h2>Our Facilities</h2>
         <div className="amenities-grid">
           {amenities.map((item, index) => (
             <div key={index} className="amenity-card">
