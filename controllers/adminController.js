@@ -10,13 +10,22 @@ const asyncHandler = fn => (req, res, next) => {
 // Admin Authentication
 // =========================
 
-exports.adminLogin = [
-  passport.authenticate("admin-local"),
-  asyncHandler(async (req, res) => {
-    res.json({ success: true, message: "Welcome Admin", admin: req.user });
-  })
-];
+exports.adminLogin = asyncHandler(async (req, res, next) => {
+  passport.authenticate("admin-local", { session: true }, (err, admin, info) => {
+    if (err) return next(err);
 
+    if (!admin) {
+      return res.status(400).json({ success: false, message: info?.message || "Login failed" });
+    }
+
+    req.login(admin, (err) => {
+      if (err) return next(err);
+
+      console.log(req.body); // ✅ will now print
+      return res.json({ success: true, message: "Welcome Admin", admin });
+    });
+  })(req, res, next);
+});
 exports.adminDashboard = asyncHandler(async (req, res) => {
   res.json({ success: true, message: "Admin Dashboard Accessed" });
 });
@@ -38,14 +47,24 @@ exports.adminLogout = (req, res, next) => {
 // =========================
 
 exports.addMember = asyncHandler(async (req, res) => {
-  const { member, pass } = req.body;
-  const addUser = new User(member);
-  const newUser = await User.register(addUser, pass.password);
-  res.json({ success: true, message: "User registered", user: newUser });
-});
+  try {
+    const { member, pass } = req.body;
+    const newUser = new User(member);
 
+    const createdUser = await User.register(newUser, pass.password);
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      user: createdUser,
+    });
+  } catch (err) {
+    console.error("Error registering user:", err);
+    res.status(500).json({ success: false, message: "Registration failed" });
+  }
+});
 exports.getAllMembers = asyncHandler(async (req, res) => {
   const members = await User.find({}).populate("seat");
+  console.log(members)
   res.json(members);
 });
 
@@ -71,6 +90,18 @@ exports.deleteUser = asyncHandler(async (req, res) => {
   res.json({ success: true, message: "User deleted" });
 });
 
+
+exports.unpaid = asyncHandler(async(req,res)=>{
+  try {
+    const users = await User.find({ feeStatus: false }).sort({ startDate: -1 });
+    res.json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+})
+
+
 // =========================
 // Seat Management
 // =========================
@@ -87,3 +118,31 @@ exports.getSeats = asyncHandler(async (req, res) => {
   const seats = await AvailableSeat.find(query).populate("bookedBy");
   res.json({ seats, filter });
 });
+
+//Montholy collection
+exports.getMonthlyCollection = async (req, res) => {
+  try {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+    // Find users who paid within this month
+    const users = await User.find({
+      feeStatus: true,
+      endDate: { $gte: startOfMonth, $lte: endOfMonth },
+    }).select("name membershipType plan fees endDate");
+
+    // Calculate total fees
+    const totalAmount = users.reduce((sum, user) => sum + user.fees, 0);
+
+    res.status(200).json({
+      month: now.toLocaleString("default", { month: "long" }),
+      year: now.getFullYear(),
+      totalAmount,
+      users,
+    });
+  } catch (error) {
+    console.error("Error fetching monthly collection:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};

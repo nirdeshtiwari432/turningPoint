@@ -1,6 +1,7 @@
 const { User } = require("../models/index");
 const fs = require("fs");
 const path = require("path");
+const passport = require("passport");
 
 // Async wrapper
 const asyncHandler = fn => (req, res, next) => {
@@ -8,72 +9,149 @@ const asyncHandler = fn => (req, res, next) => {
 };
 
 // =========================
-// User Authentication
+// User Signup
 // =========================
-
-exports.renderLogin = (req, res) => {
-  res.render("user/login.ejs");
-};
-
-exports.userLogin = asyncHandler(async (req, res) => {
-  const user = req.user;
-  req.flash("success", "Welcome User");
-  console.log(user);
-  res.render("user/user.ejs", { user });
-});
-
-exports.userLogout = (req, res, next) => {
-  req.logout(err => {
-    if (err) return next(err);
-    req.flash("success", "Logged out successfully");
-    res.redirect("/user/login");
-  });
-};
-
-// =========================
-// User Profile
-// =========================
-
-exports.renderProfile = (req, res) => {
-  res.render("user/profile.ejs", { user: req.user });
-};
-
-exports.updateProfilePic = asyncHandler(async (req, res) => {
+exports.new = asyncHandler(async (req, res) => {
   try {
-    if (!req.file) {
-      req.flash("error", "Please upload an image!");
-      return res.render("user/user.ejs", { user: req.user });
+    // Destructure fields from flat payload
+    
+    const { name, email, number, membershipType, plan, shift, password } = req.body;
+
+    // Validate required fields
+    if (!name || !number || !membershipType || !plan || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields",
+      });
     }
-
-    const user = req.user;
-
-    // Delete old profile picture
-    if (user.profilePic) {
-      const oldPath = path.join(__dirname, "../public", user.profilePic);
-      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    
+    // Check if user already exists
+    const existingUser = await User.findOne({ number });
+    
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User with this email or number already exists",
+      });
     }
+    
+    // Create new User instance (without password)
+    const newUser = new User({
+      name,
+      email,
+      number,
+      membershipType,
+      plan,
+      shift,
+    });
 
-    // Save new profile picture
-    user.profilePic = "/uploads/" + req.file.filename;
-    await user.save();
+    // Register user with passport-local-mongoose (handles password hashing)
+    const createdUser = await User.register(newUser, password);
 
-    req.flash("success", "Profile picture updated!");
-    res.render("user/user.ejs", { user });
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      user: createdUser,
+    });
   } catch (err) {
-    console.error(err);
-    req.flash("error", "Something went wrong!");
-    res.render("user/user.ejs", { user: req.user });
+    console.error("Error registering user:", err);
+    res.status(500).json({
+      success: false,
+      message: "Registration failed",
+    });
   }
 });
 
-// =========================
-// User Pages
-// =========================
 
-exports.renderFees = (req, res) => {
-  res.render("user/fees.ejs", { user: req.user });
+// =========================
+// User Login
+// =========================
+exports.login = asyncHandler(async (req, res, next) => {
+  passport.authenticate("user-local", (err, user, info) => {
+    if (err) return next(err);
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: info?.message || "Invalid username or password",
+      });
+    }
+    req.login(user, (err) => {
+      if (err) return next(err);
+      
+      // ✅ If login successful, send response
+      return res.status(200).json({
+        success: true,
+        message: "Login successful",
+        redirect: "/user/profile", // frontend can redirect here
+        user: {
+          _id: user._id,
+          name: user.name,
+          number: user.number,
+          membershipType: user.membershipType,
+          plan: user.plan,
+          shift: user.shift,
+        },
+      });
+    });
+  })(req, res, next);
+});
+
+
+exports.userProfile = asyncHandler(async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ success: false, message: "Not logged in" });
+  }
+
+  const user = await User.findById(req.user._id).select(
+    "-hash -salt -__v" // exclude sensitive fields
+  );
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+// =========================
+// User Logout
+// =========================
+exports.userLogout = (req, res, next) => {
+  console.log(req)
+  req.logout(err => {
+    if (err) return next(err);
+    res.json({ success: true, message: "Logged out successfully" });
+  });
 };
 
-exports.renderReview = (req, res) => {
-  res.render("review.ejs", { user: req.user });
-};
+
+exports.check = (req,res)=>{
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    // User is logged in
+    res.json({ loggedIn: true, userId: req.user._id, name: req.user.name });
+  } else {
+    // User not logged in
+    res.json({ loggedIn: false });
+  }
+}
+
+// =========================
+// Profile Picture Update
+// =========================
+exports.updateProfilePic = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ success: false, message: "Please upload an image!" });
+  }
+
+  const user = req.user;
+
+  // Delete old profile picture
+  if (user.profilePic && user.profilePic !== "/default-avatar.png") {
+    const oldPath = path.join(__dirname, "../public", user.profilePic);
+    if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+  }
+
+  // Save new profile picture
+  user.profilePic = "/uploads/" + req.file.filename;
+  await user.save();
+
+  res.status(200).json({ success: true, message: "Profile picture updated!", profilePic: user.profilePic });
+});

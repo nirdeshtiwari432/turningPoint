@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // 👈 for navigation
 import "./Seat.css";
 import DashboardHeader from "./DashboardHeader";
 
@@ -6,15 +7,17 @@ const Seat = () => {
   const [seats, setSeats] = useState([]);
   const [filter, setFilter] = useState("");
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Fetch seats from API
   useEffect(() => {
+    setLoading(true);
     fetch(`http://localhost:5000/admin/seats?filter=${filter}`, {
       credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => {
-        setSeats(data.seats || []); // API returns { seats: [...] }
+        setSeats(data.seats || []);
         setLoading(false);
       })
       .catch((err) => {
@@ -23,9 +26,15 @@ const Seat = () => {
       });
   }, [filter]);
 
+  // 👇 Handle Book button click
+  const handleBook = (seatId, seatNo) => {
+    navigate(`/admin/new/${seatId}/${seatNo}`);
+  };
+
   return (
     <div className="container my-4">
-      <DashboardHeader/>
+      <DashboardHeader />
+
       <div className="card w-100">
         <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
           <span>Seat Details</span>
@@ -66,7 +75,10 @@ const Seat = () => {
                         <td>{seat.bookedBy?.name || "-"}</td>
                         <td>{seat.timing?.replace("_", " ") || "-"}</td>
                         <td className="text-center">
-                          <button className="btn btn-primary btn-sm">
+                          <button
+                            className="btn btn-primary btn-sm"
+                            onClick={() => handleBook(seat._id, seat.seatNo)}
+                          >
                             Book
                           </button>
                         </td>

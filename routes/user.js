@@ -4,29 +4,44 @@ const passport = require("passport");
 const upload = require("../middleware/upload");
 const userController = require("../controllers/userController");
 
+// Middleware example
+let is = (req, res, next) => {
+  console.log("Middleware test");
+  next();
+};
+
+// =========================
+// User Signup
+// =========================
+router.route("/new")
+  .post(userController.new);
+
 // =========================
 // User Authentication
 // =========================
 router.route("/login")
-  .get(userController.renderLogin)
-  .post(
-    passport.authenticate('user-local', { failureRedirect: "/user/login", failureFlash: true }),
-    userController.userLogin
-  );
+  .post(userController.login)
 
-router.route("/logout").get(userController.userLogout);
+router.route("/logout")
+  .get(is,userController.userLogout);
 
 // =========================
 // User Profile
 // =========================
-router.route("/profile").get(userController.renderProfile);
+router.get("/profile", userController.userProfile);
 
-router.route("/profile-pic").post(upload.single("profilePic"), userController.updateProfilePic);
+router.route("/profile-pic")
+  .post(upload.single("profilePic"), userController.updateProfilePic);
 
 // =========================
-// Fees & Review
-// =========================
-router.route("/fees").get(userController.renderFees);
-router.route("/review").get(userController.renderReview);
+router.route("/check-login")
+   .get(userController.check);
+
+// Fees & Review (JSON APIs for SPA)
+router.route("/fees")
+  .get((req, res) => res.json({ success: true, message: "Fees page API coming soon" }));
+
+router.route("/review")
+  .get((req, res) => res.json({ success: true, message: "Review page API coming soon" }));
 
 module.exports = router;

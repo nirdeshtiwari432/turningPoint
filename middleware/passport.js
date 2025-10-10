@@ -1,22 +1,22 @@
 const passport = require("passport");
-const LocalStrategy = require("passport-local");
+const LocalStrategy = require("passport-local").Strategy; // ✅ FIXED
 const { User, Admin } = require("../models");
 
 module.exports = (app) => {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // User strategy (login with mobile)
+  // User strategy
   passport.use(
     "user-local",
     new LocalStrategy(
-      { usernameField: "mobile", passwordField: "password" }, // use mobile
-      async (mobile, password, done) => {
+      { usernameField: "number", passwordField: "password" },
+      async (number, password, done) => {
         try {
-          const user = await User.findOne({ mobile });
-          if (!user) return done(null, false, { message: "Mobile not registered" });
+          const user = await User.findOne({ number });
+          if (!user) return done(null, false, { message: "Number not registered" });
 
-          const isMatch = await user.authenticate(password); // passport-local-mongoose authenticate
+          const isMatch = await user.authenticate(password);
           if (!isMatch.user) return done(null, false, { message: "Incorrect password" });
 
           return done(null, isMatch.user);
@@ -27,7 +27,7 @@ module.exports = (app) => {
     )
   );
 
-  // Admin strategy (same as before)
+  // Admin strategy
   passport.use(
     "admin-local",
     new LocalStrategy(
@@ -35,7 +35,8 @@ module.exports = (app) => {
       async (mobile, password, done) => {
         try {
           const admin = await Admin.findOne({ mobile });
-          if (!admin) return done(null, false, { message: "Mobile not registered" });
+          console.log(admin,mobile)
+          if (!admin) return done(null, false, { message: "Number not registered" });
 
           const isMatch = await admin.authenticate(password);
           if (!isMatch.user) return done(null, false, { message: "Incorrect password" });

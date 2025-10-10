@@ -4,21 +4,19 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String },
-  number: { type: Number, required: true },
-  seat: { type: mongoose.Schema.Types.ObjectId, ref: "AvailableSeat", required: true },
+  number: { type: String, required: true, unique: true }, // string is better
   membershipType: { type: String, enum: ["reserved", "non_reserved"], required: true },
   plan: { type: String, enum: ["full_time", "part_time"], required: true },
   shift: { type: String, enum: ["morning", "night", "full"], default: "full" },
-  fees: { type: Number, required: true },
-  startDate: { type: Date, required: true },
-  endDate: { type: Date, required: true },
-  feeStatus: { type: Boolean, default: false, required: true },
-  profilePic: {
-  type: String,          
-  default:  "/default-avatar.png" 
-  }
+  seat: { type: mongoose.Schema.Types.ObjectId, ref: "AvailableSeat", default: null },
+  fees: { type: Number, default: 0 },
+  startDate: { type: Date, default: null },
+  endDate: { type: Date, default: null },
+  feeStatus: { type: Boolean, default: false },
+  profilePic: { type: String, default: "/default-avatar.png" }
 });
 
-userSchema.plugin(passportLocalMongoose);
+// IMPORTANT: set usernameField to "number"
+userSchema.plugin(passportLocalMongoose, { usernameField: "number" });
 
 module.exports = mongoose.model("User", userSchema);

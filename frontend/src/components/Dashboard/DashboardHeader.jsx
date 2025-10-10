@@ -46,6 +46,14 @@ const DashboardHeader = () => {
               <li className="nav-item mx-1">
                 <button
                   className="btn btn-outline-light"
+                  onClick={() => navigate("/unpaid")}
+                >
+                  Unpaid Member
+                </button>
+              </li>
+              <li className="nav-item mx-1">
+                <button
+                  className="btn btn-outline-light"
                   onClick={() => navigate("/seats")}
                 >
                   Seat Details
