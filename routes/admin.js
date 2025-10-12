@@ -1,26 +1,20 @@
 const express = require("express");
 const router = express.Router();
-const isAdmin = require("../middleware/isAdmin");
-let is = (req,res,next)=>{
-  console.log("test");
-  next()
-}
-
-// Import controller
+const { isAdmin } = require("../middleware/auth");
 const adminController = require("../controllers/adminController");
 
-// =========================
-// Admin Authentication
-// =========================
-router.route("/login").post(is,adminController.adminLogin,is);
-router.route("/dashboard").get(isAdmin, adminController.adminDashboard);
-router.route("/logout").get(adminController.adminLogout);
+// Admin Login
+router.post("/login", adminController.adminLogin); // removed stray `,is`
 
-// =========================
+// Admin Dashboard (protected)
+router.get("/dashboard", isAdmin, adminController.adminDashboard);
+
+// Logout (protected)
+router.get("/logout", isAdmin, adminController.adminLogout);
+
 // User Management
-// =========================
-router.route("/new").post(isAdmin, adminController.addMember);
-router.route("/members").get(isAdmin, adminController.getAllMembers);
+router.post("/new", isAdmin, adminController.addMember);
+router.get("/members", isAdmin, adminController.getAllMembers);
 
 router
   .route("/users/:id")
@@ -28,33 +22,23 @@ router
   .put(isAdmin, adminController.updateUser)
   .delete(isAdmin, adminController.deleteUser);
 
-router.route("/unpaid-users")
-      .get(isAdmin,adminController.unpaid)
+router.get("/unpaid-users", isAdmin, adminController.unpaid);
 
-// =========================
 // Seat Management
-// =========================
-router.route("/seats").get(isAdmin, adminController.getSeats);
+router.get("/seats", isAdmin, adminController.getSeats);
 
-// =========================
-// Monthly Collection
-// =========================
-router.route("/monthly-collection").get(isAdmin, adminController.getMonthlyCollection);
+// Monthly Collection & Fees
+router.get("/monthly-collection", isAdmin, adminController.getMonthlyCollection);
+router.get("/fees", isAdmin, adminController.fees);
 
-router.route("/fees")
-   .get(adminController.fees)
+// Bank Verification
+router.post("/varify/:id", isAdmin, adminController.varify);
+router.delete("/delete/:id", isAdmin, adminController.deleteBankDetail);
 
-//varify
-router.route("/varify/:id")
-  .post(is,adminController.varify)
-
-router.delete("/delete/:id", adminController.deleteBankDetail);
-
-
-router.get("/plans", adminController.getPlans);
-router.post("/plans/addPlan", adminController.addPlan);
-router.put("/plans/:id", adminController.updatePlan);
-router.delete("/plans/:id", adminController.deletePlan);
-
+// Plan Management
+router.get("/plans",  adminController.getPlans);
+router.post("/plans/addPlan", isAdmin, adminController.addPlan);
+router.put("/plans/:id", isAdmin, adminController.updatePlan);
+router.delete("/plans/:id", isAdmin, adminController.deletePlan);
 
 module.exports = router;
