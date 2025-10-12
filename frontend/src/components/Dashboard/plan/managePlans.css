@@ -1,0 +1,79 @@
+.manage-plans-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.manage-plans-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.plan-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+
+input, select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+.btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: white;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+  margin-left: 10px;
+}
+
+.btn-warning {
+  background: #ffc107;
+  color: black;
+  margin-right: 5px;
+}
+
+.btn-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.plan-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.plan-table th, .plan-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.plan-table th {
+  background-color: #f8f9fa;
+}
+
+.text-center {
+  text-align: center;
+}

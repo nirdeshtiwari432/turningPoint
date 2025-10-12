@@ -12,6 +12,7 @@ app.use(
   })
 );
 
+
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -29,12 +30,12 @@ require("./middleware/passport")(app);
 
 
 // Routes
-const userRoutes = require("./routes/user");
 const adminRoutes = require("./routes/admin");
 const mainRoutes = require("./routes/main");
 app.use("/", mainRoutes);
-app.use("/user", userRoutes);
 app.use("/admin", adminRoutes);
+const userRoutes = require("./routes/user");
+app.use("/user", userRoutes);
 
 // 404 handler
 app.use((req, res, next) => {

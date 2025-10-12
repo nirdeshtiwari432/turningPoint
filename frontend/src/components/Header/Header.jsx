@@ -8,25 +8,30 @@ const Header = () => {
 
   // Get user info from localStorage
   const user = JSON.parse(localStorage.getItem("user"));
-  const isAdmin = user?.role === "admin"; // Admin check
 
   const handleProfileClick = () => {
-    if (user) {
-      navigate("/profile"); 
-    } else {
+    if (!user) {
+      // Not logged in → go to login
       navigate("/login");
+      return;
+    }
+
+    // Check role and redirect accordingly
+    
+    if (user.role === "admin") {
+      navigate("/dashboard"); // Admin dashboard
+    } else {
+      navigate("/user/profile"); // Normal user profile
     }
   };
 
   const handleLibraryClick = (e) => {
     e.preventDefault();
     if (location.pathname !== "/") {
-      navigate("/", { state: { scrollTo: "library" } }); 
+      navigate("/", { state: { scrollTo: "library" } });
     } else {
       const section = document.getElementById("library-section");
-      if (section) {
-        section.scrollIntoView({ behavior: "smooth" });
-      }
+      if (section) section.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -44,7 +49,7 @@ const Header = () => {
             <li><a href="#library" onClick={handleLibraryClick}>Library</a></li>
 
             {/* Admin Only Links */}
-            {isAdmin && (
+            {user?.role === "admin" && (
               <>
                 <li><Link to="/seats">Seats</Link></li>
                 <li><Link to="/alerts">Alerts</Link></li>

@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 const UserDetailsCard = ({ user }) => {
   const navigate = useNavigate();
 
+  // ✅ Mark user as new if startDate is missing
+  const isNewUser = !user.startDate;
+
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
 
@@ -15,7 +18,7 @@ const UserDetailsCard = ({ user }) => {
 
       if (res.ok) {
         alert("User deleted successfully.");
-        navigate("/members"); // go back to members list
+        navigate("/members");
       } else {
         alert("Failed to delete user.");
       }
@@ -27,12 +30,24 @@ const UserDetailsCard = ({ user }) => {
 
   return (
     <div className="container my-5">
-      <div className="card w-100">
-        <div className="card-header bg-primary text-white">
+      <div className={`card w-100 ${isNewUser ? "border-success" : "border-secondary"}`}>
+        <div className={`card-header ${isNewUser ? "bg-success" : "bg-primary"} text-white d-flex justify-content-between align-items-center`}>
           <h2 className="mb-0">User Details</h2>
+          {isNewUser && <span className="badge bg-warning text-dark">New User</span>}
         </div>
-        <div className="card-body">
-          {[
+
+        <div className="card-body text-center">
+          {/* Profile Picture */}
+          <div className="mb-4">
+            <img
+              src={user.profilePic || "https://via.placeholder.com/150"}
+              alt="Profile"
+              className="rounded-circle"
+              style={{ width: "150px", height: "150px", objectFit: "cover" }}
+            />
+          </div>
+
+          {[ 
             { label: "Name", value: user.name },
             { label: "Email", value: user.email || "-" },
             { label: "Number", value: user.number },
@@ -45,13 +60,12 @@ const UserDetailsCard = ({ user }) => {
             { label: "End Date", value: user.endDate ? new Date(user.endDate).toLocaleDateString("en-GB") : "-" },
           ].map((field, idx) => (
             <div className="row mb-2" key={idx}>
-              <div className="col-sm-4 fw-bold">{field.label}:</div>
-              <div className="col-sm-8">{field.value}</div>
+              <div className="col-sm-4 fw-bold text-end">{field.label}:</div>
+              <div className="col-sm-8 text-start">{field.value}</div>
             </div>
           ))}
 
-          {/* Buttons */}
-          <div className="mt-4 d-flex gap-2">
+          <div className="mt-4 d-flex justify-content-center gap-2">
             <button
               className="btn btn-warning"
               onClick={() => navigate(`/members/${user._id}/edit`)}

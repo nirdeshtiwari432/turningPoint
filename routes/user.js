@@ -1,32 +1,54 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
-const upload = require("../middleware/upload");
+const upload = require("../middleware/uploadProfile");
 const userController = require("../controllers/userController");
+
+// Middleware example
+let is = (req, res, next) => {
+  console.log("Middleware test");
+  next();
+};
+
+const isLoggedIn = (req, res, next) => {
+  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+  next();
+};
+
+// =========================
+// User Signup
+// =========================
+router.route("/new")
+  .post(userController.new);
 
 // =========================
 // User Authentication
 // =========================
 router.route("/login")
-  .get(userController.renderLogin)
-  .post(
-    passport.authenticate('user-local', { failureRedirect: "/user/login", failureFlash: true }),
-    userController.userLogin
-  );
+  .post(userController.login)
 
-router.route("/logout").get(userController.userLogout);
+router.route("/logout")
+  .get(userController.userLogout);
 
 // =========================
 // User Profile
 // =========================
-router.route("/profile").get(userController.renderProfile);
+router.get("/profile", userController.userProfile);
 
-router.route("/profile-pic").post(upload.single("profilePic"), userController.updateProfilePic);
+router.route("/upload-photo")
+  .post(upload.single("profilePic"),is,userController.updateProfilePic);
 
 // =========================
-// Fees & Review
-// =========================
-router.route("/fees").get(userController.renderFees);
-router.route("/review").get(userController.renderReview);
+router.route("/check-login")
+   .get(userController.check);
+
+// Fees & Review (JSON APIs for SPA)
+router.route("/bank-details")
+  .post(is,isLoggedIn,userController.bank);
+
+router.route("/review")
+  .get((req, res) => res.json({ success: true, message: "Review page API coming soon" }));
+
+  
 
 module.exports = router;

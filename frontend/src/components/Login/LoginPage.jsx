@@ -1,32 +1,41 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./login.css";
 
 const LoginPage = () => {
-  const [mobile, setMobile] = useState(""); // changed from email
+  const [number, setNumber] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("user"); // default role
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
+    const route = role === "admin" ? "admin/login" : "user/login";
+
+    // Send number for user, mobile for admin
+    const body = role === "admin" ? { mobile: number, password } : { number, password };
+
     try {
-      const res = await fetch("http://localhost:5000/admin/login", {
+      const res = await fetch(`http://localhost:5000/${route}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include", // for passport sessions/cookies
-        body: JSON.stringify({ mobile, password }) // send mobile instead of username
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(body),
       });
 
       const data = await res.json();
 
       if (data.success) {
-        alert(data.message); // or redirect
-        window.location.href = "/dashboard"; 
+        alert(data.message);
+
+        localStorage.setItem("user", JSON.stringify({ ...data.user, role }));
+        window.location.href = role === "admin" ? "/dashboard" : "/user/profile";
       } else {
         setError(data.message || "Login failed");
       }
@@ -41,23 +50,45 @@ const LoginPage = () => {
   return (
     <div className="login-page">
       <div className="login-container">
-        <h2>Welcome Back Admin</h2>
+        <h2>Welcome Back</h2>
         <p className="subtitle">Login to continue your journey.</p>
 
+        {/* Role Selection */}
+        <div className="form-group">
+          <label>Login As:</label>
+          <div>
+            <input
+              type="radio"
+              name="role"
+              value="user"
+              checked={role === "user"}
+              onChange={(e) => setRole(e.target.value)}
+            />{" "}
+            User
+            <input
+              type="radio"
+              name="role"
+              value="admin"
+              checked={role === "admin"}
+              onChange={(e) => setRole(e.target.value)}
+              style={{ marginLeft: "20px" }}
+            />{" "}
+            Admin
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit}>
-          {/* Mobile */}
           <div className="form-group">
-            <label>Mobile Number</label>
+            <label>{role === "admin" ? "Mobile" : "Number"}</label>
             <input
               type="text"
-              placeholder="Enter your mobile number"
-              value={mobile}
-              onChange={(e) => setMobile(e.target.value)}
+              placeholder={role === "admin" ? "Enter your mobile" : "Enter your number"}
+              value={number}
+              onChange={(e) => setNumber(e.target.value)}
               required
             />
           </div>
 
-          {/* Password */}
           <div className="form-group">
             <label>Password</label>
             <input
@@ -74,14 +105,19 @@ const LoginPage = () => {
           <button type="submit" className="btn primary" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
-        </form>
 
-        <p className="switch">
-          Don’t have an account?{" "}
-          <a href="/signup" className="link">
-            Sign Up
-          </a>
-        </p>
+          {/* Register Button */}
+          <div className="register-link">
+            <p>Don't have an account?</p>
+            <button
+              type="button"
+              className="btn secondary"
+              onClick={() => navigate("/signup")}
+            >
+              Register
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

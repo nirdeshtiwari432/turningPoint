@@ -1,6 +1,8 @@
-const { User } = require("../models/index");
+const { User , BankDetails } = require("../models/index");
 const fs = require("fs");
 const path = require("path");
+const passport = require("passport");
+
 
 // Async wrapper
 const asyncHandler = fn => (req, res, next) => {
@@ -8,72 +10,187 @@ const asyncHandler = fn => (req, res, next) => {
 };
 
 // =========================
-// User Authentication
+// User Signup
 // =========================
-
-exports.renderLogin = (req, res) => {
-  res.render("user/login.ejs");
-};
-
-exports.userLogin = asyncHandler(async (req, res) => {
-  const user = req.user;
-  req.flash("success", "Welcome User");
-  console.log(user);
-  res.render("user/user.ejs", { user });
-});
-
-exports.userLogout = (req, res, next) => {
-  req.logout(err => {
-    if (err) return next(err);
-    req.flash("success", "Logged out successfully");
-    res.redirect("/user/login");
-  });
-};
-
-// =========================
-// User Profile
-// =========================
-
-exports.renderProfile = (req, res) => {
-  res.render("user/profile.ejs", { user: req.user });
-};
-
-exports.updateProfilePic = asyncHandler(async (req, res) => {
+exports.new = asyncHandler(async (req, res) => {
   try {
-    if (!req.file) {
-      req.flash("error", "Please upload an image!");
-      return res.render("user/user.ejs", { user: req.user });
+    const { name, email, number, membershipType, plan, shift, password } = req.body;
+
+    if (!name || !number || !membershipType || !plan || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields",
+      });
     }
 
-    const user = req.user;
-
-    // Delete old profile picture
-    if (user.profilePic) {
-      const oldPath = path.join(__dirname, "../public", user.profilePic);
-      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    const existingUser = await User.findOne({ number });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User with this email or number already exists",
+      });
     }
 
-    // Save new profile picture
-    user.profilePic = "/uploads/" + req.file.filename;
-    await user.save();
+    const newUser = new User({
+      name,
+      email,
+      number,
+      membershipType,
+      plan,
+      shift,
+    });
 
-    req.flash("success", "Profile picture updated!");
-    res.render("user/user.ejs", { user });
+    const createdUser = await User.register(newUser, password);
+
+    // ✅ Place req.login here
+    req.login(createdUser, (err) => {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          message: "Login after signup failed",
+        });
+      }
+
+      // User is now logged in, session created
+      res.status(201).json({
+        success: true,
+        message: "User registered successfully",
+        user: createdUser,
+      });
+    });
+
   } catch (err) {
-    console.error(err);
-    req.flash("error", "Something went wrong!");
-    res.render("user/user.ejs", { user: req.user });
+    console.error("Error registering user:", err);
+    res.status(500).json({
+      success: false,
+      message: "Registration failed",
+    });
   }
 });
 
-// =========================
-// User Pages
-// =========================
 
-exports.renderFees = (req, res) => {
-  res.render("user/fees.ejs", { user: req.user });
+// =========================
+// User Login
+// =========================
+exports.login = asyncHandler(async (req, res, next) => {
+  passport.authenticate("user-local", (err, user, info) => {
+    console.log(user)
+    if (err) return next(err);
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: info?.message || "Invalid username or password",
+      });
+    }
+    req.login(user, (err) => {
+      if (err) return next(err);
+      
+      // ✅ If login successful, send response
+      return res.status(200).json({
+        success: true,
+        message: "Login successful",
+        redirect: "/user/profile", // frontend can redirect here
+        user: {
+          _id: user._id,
+          name: user.name,
+          number: user.number,
+          membershipType: user.membershipType,
+          plan: user.plan,
+          shift: user.shift,
+        },
+      });
+    });
+  })(req, res, next);
+});
+
+
+exports.userProfile = asyncHandler(async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ success: false, message: "Not logged in" });
+  }
+
+  const user = await User.findById(req.user._id).select(
+    "-hash -salt -__v" // exclude sensitive fields
+  );
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+// =========================
+// User Logout
+// =========================
+exports.userLogout = (req, res, next) => {
+  
+  req.logout(err => {
+    if (err) return next(err);
+    res.json({ success: true, message: "Logged out successfully" });
+  });
 };
 
-exports.renderReview = (req, res) => {
-  res.render("review.ejs", { user: req.user });
-};
+
+exports.check = (req,res)=>{
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    // User is logged in
+    res.json({ loggedIn: true, userId: req.user._id, name: req.user.name });
+  } else {
+    // User not logged in
+    res.json({ loggedIn: false });
+  }
+}
+
+// =========================
+// Profile Picture Update
+// =========================
+exports.updateProfilePic = asyncHandler(async (req, res) => {
+  console.log("🧑 User:", req.body);
+  if (!req.file) {
+    return res.status(400).json({ success: false, message: "Please upload an image!" });
+  }
+
+  const user = req.user;
+
+  // Delete old photo from Cloudinary (if not default)
+  if (user.profilePic && !user.profilePic.includes("default-avatar")) {
+    try {
+      const publicId = user.profilePic.split("/").pop().split(".")[0];
+      await cloudinary.uploader.destroy(`profile_photos/${publicId}`);
+    } catch (err) {
+      console.warn("Failed to delete old Cloudinary image:", err.message);
+    }
+  }
+
+  user.profilePic = req.file.path;
+  await user.save();
+
+  res.json({
+    success: true,
+    message: "Profile picture updated successfully!",
+    imageUrl: req.file.path,
+  });
+});
+
+exports.bank = asyncHandler(async(req,res)=>{
+  const { accountHolder, upiMobile, plan, amount } = req.body;
+  console.log(req.body,req.user._id)
+
+    if (!accountHolder || !upiMobile || !plan || !amount) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const bankDetails = new BankDetails({
+      user: req.user._id,
+      accountHolder,
+      upiMobile,
+      plan,
+      amount,
+    });
+
+    await bankDetails.save();
+
+    res.json({ success: true, message: "Bank details submitted successfully!" });
+  })
+
+
+
