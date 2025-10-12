@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DashboardHeader from "./DashboardHeader";
+import BankDetailsTable from "./Fees/BankDetailsTable"
 
 const AdminDashboard = () => {
   const [data, setData] = useState({ totalAmount: 0, users: [] });
@@ -68,6 +69,10 @@ const AdminDashboard = () => {
             )}
           </>
         )}
+      </div>
+      <div>
+        <h1>Today Payments</h1>
+        <BankDetailsTable/>
       </div>
     </div>
   );

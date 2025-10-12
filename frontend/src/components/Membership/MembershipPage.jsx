@@ -4,6 +4,8 @@ import "./membership.css";
 
 const MembershipPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [seatPlans, setSeatPlans] = useState([]);
+  const [longTermPlans, setLongTermPlans] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,35 +18,30 @@ const MembershipPage = () => {
         setIsLoggedIn(data.loggedIn);
       } catch (err) {
         console.error(err);
-        setIsLoggedIn(false);
+      }
+    };
+
+    const fetchPlans = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/admin/plans");
+        const data = await res.json();
+        if (data.success) {
+          setSeatPlans(data.plans.filter(p => p.category === "seat"));
+          setLongTermPlans(data.plans.filter(p => p.category === "longterm"));
+        }
+      } catch (err) {
+        console.error("Error fetching plans:", err);
       }
     };
 
     checkLogin();
+    fetchPlans();
   }, []);
 
   const handlePaymentClick = (plan) => {
-    if (!isLoggedIn) {
-      navigate("/login");
-      return;
-    }
-
-    // Proceed to payment page with plan info
+    if (!isLoggedIn) return navigate("/login");
     navigate("/payment", { state: { plan } });
   };
-
-  const seatPlans = [
-    { title: "Morning Seat", price: 400, timing: "10 AM – 4 PM" },
-    { title: "Evening Seat", price: 400, timing: "4 PM – 8 PM" },
-    { title: "Full Time", price: 500, timing: "Full Time" },
-    { title: "Full Time Reserved", price: 600, timing: "Full Time", reserved: true },
-  ];
-
-  const longTermPlans = [
-    { title: "3 Month Plan", price: 1500, duration: "3 months" },
-    { title: "6 Month Plan", price: 2500, duration: "6 months" },
-    { title: "1 Year Plan", price: 5000, duration: "12 months" },
-  ];
 
   return (
     <section className="membership">
@@ -74,12 +71,14 @@ const MembershipPage = () => {
           {longTermPlans.map((plan, idx) => (
             <div className="card" key={idx}>
               <h3>{plan.title}</h3>
-              <p className="price">₹{plan.price}{plan.title === "1 Year Plan" && <span>/year</span>}</p>
+              <p className="price">
+                ₹{plan.price}{plan.title === "1 Year Plan" && <span>/year</span>}
+              </p>
               <ul>
                 <li>Flexible seat access</li>
                 <li>Valid for {plan.duration}</li>
               </ul>
-              <button className="btn" onClick={() => handlePaymentClick(plan.title)}>
+              <button className="btn" onClick={() => handlePaymentClick(plan)}>
                 Pay Now
               </button>
             </div>

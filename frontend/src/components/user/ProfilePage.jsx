@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // for navigation
+import { useNavigate } from "react-router-dom";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
+  const [file, setFile] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,9 +27,44 @@ const ProfilePage = () => {
 
   if (!user) return <p>Loading...</p>;
 
-  const handlePaymentClick = () => {
-    navigate("/membership");
+  const handleFileChange = (e) => {
+    const selected = e.target.files[0];
+    if (selected && selected.size > 10 * 1024 * 1024) {
+      alert("File size exceeds 10 MB!");
+      e.target.value = null;
+      return;
+    }
+    setFile(selected);
   };
+
+  const handleUpload = async () => {
+    if (!file) return alert("Please select an image first!");
+
+    const formData = new FormData();
+    formData.append("profilePic", file);
+
+    try {
+      // ✅ Match backend route
+      const res = await fetch("http://localhost:5000/user/upload-photo", {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert("Profile photo updated successfully!");
+        setUser((prev) => ({ ...prev, profilePic: data.imageUrl }));
+      } else {
+        alert(data.message || "Upload failed");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong while uploading");
+    }
+  };
+
+  const handlePaymentClick = () => navigate("/membership");
 
   const handleLogout = async () => {
     try {
@@ -38,8 +74,8 @@ const ProfilePage = () => {
       });
       const data = await res.json();
       if (res.ok) {
-        localStorage.removeItem("user"); // Clear localStorage
-        navigate("/login"); // Redirect to login
+        localStorage.removeItem("user");
+        navigate("/login");
       } else {
         alert(data.message || "Logout failed");
       }
@@ -52,12 +88,22 @@ const ProfilePage = () => {
   return (
     <div className="container my-5">
       <h2>My Profile</h2>
+
       <img
         src={user.profilePic || "/default-avatar.png"}
         alt="Profile"
         width="150"
-        style={{ borderRadius: "50%" }}
+        height="150"
+        style={{ borderRadius: "50%", objectFit: "cover" }}
       />
+
+      <div className="mt-3">
+        <input type="file" accept="image/*" onChange={handleFileChange} />
+        <button className="btn btn-success ms-2" onClick={handleUpload}>
+          Upload Photo
+        </button>
+      </div>
+
       <p><strong>Name:</strong> {user.name}</p>
       <p><strong>Email:</strong> {user.email || "Not provided"}</p>
       <p><strong>Number:</strong> {user.number}</p>
@@ -75,11 +121,7 @@ const ProfilePage = () => {
         </button>
       )}
 
-      {/* Logout Button */}
-      <button
-        className="btn btn-secondary mt-3 ms-3"
-        onClick={handleLogout}
-      >
+      <button className="btn btn-secondary mt-3 ms-3" onClick={handleLogout}>
         Logout
       </button>
     </div>

@@ -1,7 +1,8 @@
-const { User } = require("../models/index");
+const { User , BankDetails } = require("../models/index");
 const fs = require("fs");
 const path = require("path");
 const passport = require("passport");
+
 
 // Async wrapper
 const asyncHandler = fn => (req, res, next) => {
@@ -68,6 +69,7 @@ exports.new = asyncHandler(async (req, res) => {
 // =========================
 exports.login = asyncHandler(async (req, res, next) => {
   passport.authenticate("user-local", (err, user, info) => {
+    console.log(user)
     if (err) return next(err);
     if (!user) {
       return res.status(400).json({
@@ -115,7 +117,7 @@ exports.userProfile = asyncHandler(async (req, res) => {
 // User Logout
 // =========================
 exports.userLogout = (req, res, next) => {
-  console.log(req)
+  
   req.logout(err => {
     if (err) return next(err);
     res.json({ success: true, message: "Logged out successfully" });
@@ -137,21 +139,53 @@ exports.check = (req,res)=>{
 // Profile Picture Update
 // =========================
 exports.updateProfilePic = asyncHandler(async (req, res) => {
+  console.log("🧑 User:", req.body);
   if (!req.file) {
     return res.status(400).json({ success: false, message: "Please upload an image!" });
   }
 
   const user = req.user;
 
-  // Delete old profile picture
-  if (user.profilePic && user.profilePic !== "/default-avatar.png") {
-    const oldPath = path.join(__dirname, "../public", user.profilePic);
-    if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+  // Delete old photo from Cloudinary (if not default)
+  if (user.profilePic && !user.profilePic.includes("default-avatar")) {
+    try {
+      const publicId = user.profilePic.split("/").pop().split(".")[0];
+      await cloudinary.uploader.destroy(`profile_photos/${publicId}`);
+    } catch (err) {
+      console.warn("Failed to delete old Cloudinary image:", err.message);
+    }
   }
 
-  // Save new profile picture
-  user.profilePic = "/uploads/" + req.file.filename;
+  user.profilePic = req.file.path;
   await user.save();
 
-  res.status(200).json({ success: true, message: "Profile picture updated!", profilePic: user.profilePic });
+  res.json({
+    success: true,
+    message: "Profile picture updated successfully!",
+    imageUrl: req.file.path,
+  });
 });
+
+exports.bank = asyncHandler(async(req,res)=>{
+  const { accountHolder, upiMobile, plan, amount } = req.body;
+  console.log(req.body,req.user._id)
+
+    if (!accountHolder || !upiMobile || !plan || !amount) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const bankDetails = new BankDetails({
+      user: req.user._id,
+      accountHolder,
+      upiMobile,
+      plan,
+      amount,
+    });
+
+    await bankDetails.save();
+
+    res.json({ success: true, message: "Bank details submitted successfully!" });
+  })
+
+
+

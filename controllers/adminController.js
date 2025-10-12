@@ -1,5 +1,6 @@
-const { User, AvailableSeat } = require("../models/index");
+const { User, AvailableSeat , BankDetails,Plan} = require("../models/index");
 const passport = require("passport");
+require('dotenv').config()
 
 // Helper wrapper for async errors
 const asyncHandler = fn => (req, res, next) => {
@@ -76,11 +77,52 @@ exports.getUserById = asyncHandler(async (req, res) => {
 });
 
 exports.updateUser = asyncHandler(async (req, res) => {
+  
   const { id } = req.params;
-  const updates = req.body;
+  const { seatNo, ...updates } = req.body; // extract seat number separately
+  console.log(1)
+  // Find the user first
+  const user = await User.findById(id);
+  if (!user) {
+    return res.status(404).json({ success: false, message: "User not found" });
+  }
+  console.log(seatNo)
+
+  // Handle seat update (if seatNo is provided)
+  if (seatNo) {
+    // Find the seat by seatNo
+    const seat = await AvailableSeat.findOne({ seatNo });
+    console.log(seat)
+    if (!seat) {
+      return res.status(404).json({ success: false, message: "Seat not found" });
+    }
+
+    if (seat.isBooked && (!seat.bookedBy || seat.bookedBy.toString() !== id)) {
+      return res.status(400).json({ success: false, message: "Seat already booked" });
+    }
+
+    // Free up the old seat (if user already had one)
+    if (user.seat && user.seat.toString() !== seat._id.toString()) {
+      await AvailableSeat.findByIdAndUpdate(user.seat, { isBooked: false, bookedBy: null });
+    }
+
+    // Assign the new seat
+    seat.isBooked = true;
+    seat.bookedBy = id;
+    await seat.save();
+
+    // Update the user’s seat field
+    updates.seat = seat._id;
+  }
+
+  // Update user data
   const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true });
-  if (!updatedUser) return res.status(404).json({ success: false, message: "User not found" });
-  res.json({ success: true, message: "User updated", user: updatedUser });
+
+  res.json({
+    success: true,
+    message: "User updated successfully",
+    user: updatedUser,
+  });
 });
 
 exports.deleteUser = asyncHandler(async (req, res) => {
@@ -146,3 +188,92 @@ exports.getMonthlyCollection = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+exports.fees = asyncHandler(async(req,res,next)=>{
+  try {
+    console.log("1")
+    const bank = await BankDetails.find({});
+    res.json(bank);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+   
+})
+
+exports.varify = asyncHandler(async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    // Find the bank detail entry
+    const bankDetail = await BankDetails.findById(id);
+    if (!bankDetail) {
+      return res.status(404).json({ message: "Bank detail not found" });
+    }
+
+    // Update bank verification status
+    bankDetail.verified = true;
+    await bankDetail.save();
+
+    // Update corresponding user's fee status
+    const user = await User.findById(bankDetail.user);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.feeStatus = true;
+    await user.save();
+
+    res.status(200).json({ message: "Verification successful", bankDetail, user });
+  } catch (err) {
+    console.error("Error in verification:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+exports.deleteBankDetail = asyncHandler(async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    // Find and delete the bank detail
+    const bankDetail = await BankDetails.findByIdAndDelete(id);
+
+    if (!bankDetail) {
+      return res.status(404).json({ message: "Bank detail not found" });
+    }
+
+    res.status(200).json({ message: "Bank detail deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting bank detail:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
+exports.getPlans = asyncHandler(async (req, res) => {
+  const plans = await Plan.find();
+  res.json({ success: true, plans });
+});
+
+// Add a new plan
+exports.addPlan = asyncHandler(async (req, res) => {
+  console.log(req.body)
+  const plan = await Plan.create(req.body);
+  res.status(201).json({ success: true, plan });
+});
+
+// Update a plan
+exports.updatePlan = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const updatedPlan = await Plan.findByIdAndUpdate(id, req.body, { new: true });
+  if (!updatedPlan) return res.status(404).json({ success: false, message: "Plan not found" });
+  res.json({ success: true, updatedPlan });
+});
+
+// Delete a plan
+exports.deletePlan = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const deleted = await Plan.findByIdAndDelete(id);
+  if (!deleted) return res.status(404).json({ success: false, message: "Plan not found" });
+  res.json({ success: true, message: "Plan deleted successfully" });
+});

@@ -1,0 +1,44 @@
+/* BankDetailsTable.css */
+
+.bank-details-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.bank-details-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.bank-details-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.bank-details-table th,
+.bank-details-table td {
+  border: 1px solid #ddd;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.bank-details-table th {
+  background-color: #4CAF50;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.bank-details-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.bank-details-table tr:hover {
+  background-color: #e0f7fa;
+}
+
+.bank-details-table td {
+  color: #555;
+}

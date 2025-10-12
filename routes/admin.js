@@ -39,6 +39,22 @@ router.route("/seats").get(isAdmin, adminController.getSeats);
 // =========================
 // Monthly Collection
 // =========================
-router.route("/monthly-collection").get(isAdmin,is, adminController.getMonthlyCollection);
+router.route("/monthly-collection").get(isAdmin, adminController.getMonthlyCollection);
+
+router.route("/fees")
+   .get(adminController.fees)
+
+//varify
+router.route("/varify/:id")
+  .post(is,adminController.varify)
+
+router.delete("/delete/:id", adminController.deleteBankDetail);
+
+
+router.get("/plans", adminController.getPlans);
+router.post("/plans/addPlan", adminController.addPlan);
+router.put("/plans/:id", adminController.updatePlan);
+router.delete("/plans/:id", adminController.deletePlan);
+
 
 module.exports = router;

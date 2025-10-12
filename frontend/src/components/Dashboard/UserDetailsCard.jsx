@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 const UserDetailsCard = ({ user }) => {
   const navigate = useNavigate();
 
+  // ✅ Mark user as new if startDate is missing
+  const isNewUser = !user.startDate;
+
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
 
@@ -15,7 +18,7 @@ const UserDetailsCard = ({ user }) => {
 
       if (res.ok) {
         alert("User deleted successfully.");
-        navigate("/members"); // go back to members list
+        navigate("/members");
       } else {
         alert("Failed to delete user.");
       }
@@ -27,10 +30,12 @@ const UserDetailsCard = ({ user }) => {
 
   return (
     <div className="container my-5">
-      <div className="card w-100">
-        <div className="card-header bg-primary text-white">
+      <div className={`card w-100 ${isNewUser ? "border-success" : "border-secondary"}`}>
+        <div className={`card-header ${isNewUser ? "bg-success" : "bg-primary"} text-white d-flex justify-content-between align-items-center`}>
           <h2 className="mb-0">User Details</h2>
+          {isNewUser && <span className="badge bg-warning text-dark">New User</span>}
         </div>
+
         <div className="card-body">
           {[
             { label: "Name", value: user.name },
@@ -50,7 +55,6 @@ const UserDetailsCard = ({ user }) => {
             </div>
           ))}
 
-          {/* Buttons */}
           <div className="mt-4 d-flex gap-2">
             <button
               className="btn btn-warning"

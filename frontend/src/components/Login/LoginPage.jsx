@@ -1,5 +1,5 @@
-// LoginPage.jsx
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./login.css";
 
 const LoginPage = () => {
@@ -8,6 +8,8 @@ const LoginPage = () => {
   const [role, setRole] = useState("user"); // default role
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,8 +33,8 @@ const LoginPage = () => {
 
       if (data.success) {
         alert(data.message);
-        
-        localStorage.setItem("user", JSON.stringify({...data.user,role:role})); 
+
+        localStorage.setItem("user", JSON.stringify({ ...data.user, role }));
         window.location.href = role === "admin" ? "/dashboard" : "/user/profile";
       } else {
         setError(data.message || "Login failed");
@@ -103,6 +105,18 @@ const LoginPage = () => {
           <button type="submit" className="btn primary" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
+
+          {/* Register Button */}
+          <div className="register-link">
+            <p>Don't have an account?</p>
+            <button
+              type="button"
+              className="btn secondary"
+              onClick={() => navigate("/signup")}
+            >
+              Register
+            </button>
+          </div>
         </form>
       </div>
     </div>

@@ -33,6 +33,7 @@ const DashboardHeader = () => {
           >
             Library Admin
           </button>
+          
           <div className="collapse navbar-collapse">
             <ul className="navbar-nav ms-auto">
               <li className="nav-item mx-1">
@@ -49,6 +50,14 @@ const DashboardHeader = () => {
                   onClick={() => navigate("/unpaid")}
                 >
                   Unpaid Member
+                </button>
+              </li>
+              <li className="nav-item mx-1">
+                <button
+                  className="btn btn-outline-light"
+                  onClick={() => navigate("/plan")}
+                >
+                  Plan
                 </button>
               </li>
               <li className="nav-item mx-1">
