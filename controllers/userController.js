@@ -14,29 +14,23 @@ const asyncHandler = fn => (req, res, next) => {
 // =========================
 exports.new = asyncHandler(async (req, res) => {
   try {
-    // Destructure fields from flat payload
-    
     const { name, email, number, membershipType, plan, shift, password } = req.body;
 
-    // Validate required fields
     if (!name || !number || !membershipType || !plan || !password) {
       return res.status(400).json({
         success: false,
         message: "Missing required fields",
       });
     }
-    
-    // Check if user already exists
+
     const existingUser = await User.findOne({ number });
-    
     if (existingUser) {
       return res.status(400).json({
         success: false,
         message: "User with this email or number already exists",
       });
     }
-    
-    // Create new User instance (without password)
+
     const newUser = new User({
       name,
       email,
@@ -46,14 +40,25 @@ exports.new = asyncHandler(async (req, res) => {
       shift,
     });
 
-    // Register user with passport-local-mongoose (handles password hashing)
     const createdUser = await User.register(newUser, password);
 
-    res.status(201).json({
-      success: true,
-      message: "User registered successfully",
-      user: createdUser,
+    // ✅ Place req.login here
+    req.login(createdUser, (err) => {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          message: "Login after signup failed",
+        });
+      }
+
+      // User is now logged in, session created
+      res.status(201).json({
+        success: true,
+        message: "User registered successfully",
+        user: createdUser,
+      });
     });
+
   } catch (err) {
     console.error("Error registering user:", err);
     res.status(500).json({

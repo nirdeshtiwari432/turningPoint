@@ -36,8 +36,18 @@ const UserDetailsCard = ({ user }) => {
           {isNewUser && <span className="badge bg-warning text-dark">New User</span>}
         </div>
 
-        <div className="card-body">
-          {[
+        <div className="card-body text-center">
+          {/* Profile Picture */}
+          <div className="mb-4">
+            <img
+              src={user.profilePic || "https://via.placeholder.com/150"}
+              alt="Profile"
+              className="rounded-circle"
+              style={{ width: "150px", height: "150px", objectFit: "cover" }}
+            />
+          </div>
+
+          {[ 
             { label: "Name", value: user.name },
             { label: "Email", value: user.email || "-" },
             { label: "Number", value: user.number },
@@ -50,12 +60,12 @@ const UserDetailsCard = ({ user }) => {
             { label: "End Date", value: user.endDate ? new Date(user.endDate).toLocaleDateString("en-GB") : "-" },
           ].map((field, idx) => (
             <div className="row mb-2" key={idx}>
-              <div className="col-sm-4 fw-bold">{field.label}:</div>
-              <div className="col-sm-8">{field.value}</div>
+              <div className="col-sm-4 fw-bold text-end">{field.label}:</div>
+              <div className="col-sm-8 text-start">{field.value}</div>
             </div>
           ))}
 
-          <div className="mt-4 d-flex gap-2">
+          <div className="mt-4 d-flex justify-content-center gap-2">
             <button
               className="btn btn-warning"
               onClick={() => navigate(`/members/${user._id}/edit`)}
