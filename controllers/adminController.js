@@ -1,16 +1,15 @@
-const { User, AvailableSeat , BankDetails,Plan} = require("../models/index");
+const { User, AvailableSeat, BankDetails, Plan } = require("../models/index");
 const passport = require("passport");
-require('dotenv').config()
+require("dotenv").config();
 
 // Helper wrapper for async errors
-const asyncHandler = fn => (req, res, next) => {
+const asyncHandler = (fn) => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch(next);
 };
 
 // =========================
 // Admin Authentication
 // =========================
-
 exports.adminLogin = asyncHandler(async (req, res, next) => {
   passport.authenticate("admin-local", { session: true }, (err, admin, info) => {
     if (err) return next(err);
@@ -21,24 +20,22 @@ exports.adminLogin = asyncHandler(async (req, res, next) => {
 
     req.login(admin, (err) => {
       if (err) return next(err);
-
-      console.log(req.body); // ✅ will now print
       return res.json({ success: true, message: "Welcome Admin", admin });
     });
   })(req, res, next);
 });
+
 exports.adminDashboard = asyncHandler(async (req, res) => {
   res.json({ success: true, message: "Admin Dashboard Accessed" });
 });
 
 exports.adminLogout = (req, res, next) => {
   try {
-    req.logout(err => {
+    req.logout((err) => {
       if (err) return next(err);
       res.json({ success: true, message: "You are logged out" });
     });
   } catch (err) {
-    console.log(err);
     res.status(500).json({ success: false, message: "Logout failed" });
   }
 };
@@ -46,26 +43,20 @@ exports.adminLogout = (req, res, next) => {
 // =========================
 // User Management
 // =========================
-
 exports.addMember = asyncHandler(async (req, res) => {
-  try {
-    const { member, pass } = req.body;
-    const newUser = new User(member);
+  const { member, pass } = req.body;
+  const newUser = new User(member);
+  const createdUser = await User.register(newUser, pass.password);
 
-    const createdUser = await User.register(newUser, pass.password);
-    res.status(201).json({
-      success: true,
-      message: "User registered successfully",
-      user: createdUser,
-    });
-  } catch (err) {
-    console.error("Error registering user:", err);
-    res.status(500).json({ success: false, message: "Registration failed" });
-  }
+  res.status(201).json({
+    success: true,
+    message: "User registered successfully",
+    user: createdUser,
+  });
 });
+
 exports.getAllMembers = asyncHandler(async (req, res) => {
   const members = await User.find({}).populate("seat");
-  console.log(members)
   res.json(members);
 });
 
@@ -77,52 +68,36 @@ exports.getUserById = asyncHandler(async (req, res) => {
 });
 
 exports.updateUser = asyncHandler(async (req, res) => {
-  
   const { id } = req.params;
-  const { seatNo, ...updates } = req.body; // extract seat number separately
-  console.log(1)
-  // Find the user first
-  const user = await User.findById(id);
-  if (!user) {
-    return res.status(404).json({ success: false, message: "User not found" });
-  }
-  console.log(seatNo)
+  const { seatNo, ...updates } = req.body;
 
-  // Handle seat update (if seatNo is provided)
+  const user = await User.findById(id);
+  if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+  // Handle seat update if seatNo provided
   if (seatNo) {
-    // Find the seat by seatNo
     const seat = await AvailableSeat.findOne({ seatNo });
-    console.log(seat)
-    if (!seat) {
-      return res.status(404).json({ success: false, message: "Seat not found" });
-    }
+    if (!seat) return res.status(404).json({ success: false, message: "Seat not found" });
 
     if (seat.isBooked && (!seat.bookedBy || seat.bookedBy.toString() !== id)) {
       return res.status(400).json({ success: false, message: "Seat already booked" });
     }
 
-    // Free up the old seat (if user already had one)
+    // Free old seat if different
     if (user.seat && user.seat.toString() !== seat._id.toString()) {
       await AvailableSeat.findByIdAndUpdate(user.seat, { isBooked: false, bookedBy: null });
     }
 
-    // Assign the new seat
+    // Assign new seat
     seat.isBooked = true;
     seat.bookedBy = id;
     await seat.save();
 
-    // Update the user’s seat field
     updates.seat = seat._id;
   }
 
-  // Update user data
   const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true });
-
-  res.json({
-    success: true,
-    message: "User updated successfully",
-    user: updatedUser,
-  });
+  res.json({ success: true, message: "User updated successfully", user: updatedUser });
 });
 
 exports.deleteUser = asyncHandler(async (req, res) => {
@@ -132,22 +107,14 @@ exports.deleteUser = asyncHandler(async (req, res) => {
   res.json({ success: true, message: "User deleted" });
 });
 
-
-exports.unpaid = asyncHandler(async(req,res)=>{
-  try {
-    const users = await User.find({ feeStatus: false }).sort({ startDate: -1 });
-    res.json(users);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
-  }
-})
-
+exports.unpaid = asyncHandler(async (req, res) => {
+  const users = await User.find({ feeStatus: false }).sort({ startDate: -1 });
+  res.json(users);
+});
 
 // =========================
 // Seat Management
 // =========================
-
 exports.getSeats = asyncHandler(async (req, res) => {
   const filter = req.query.filter;
   let query = {};
@@ -161,108 +128,74 @@ exports.getSeats = asyncHandler(async (req, res) => {
   res.json({ seats, filter });
 });
 
-//Montholy collection
-exports.getMonthlyCollection = async (req, res) => {
-  try {
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+// =========================
+// Monthly Collection
+// =========================
+exports.getMonthlyCollection = asyncHandler(async (req, res) => {
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-    // Find users who paid within this month
-    const users = await User.find({
-      feeStatus: true,
-      endDate: { $gte: startOfMonth, $lte: endOfMonth },
-    }).select("name membershipType plan fees endDate");
+  const users = await User.find({
+    feeStatus: true,
+    endDate: { $gte: startOfMonth, $lte: endOfMonth },
+  }).select("name membershipType plan fees endDate");
 
-    // Calculate total fees
-    const totalAmount = users.reduce((sum, user) => sum + user.fees, 0);
+  const totalAmount = users.reduce((sum, user) => sum + user.fees, 0);
 
-    res.status(200).json({
-      month: now.toLocaleString("default", { month: "long" }),
-      year: now.getFullYear(),
-      totalAmount,
-      users,
-    });
-  } catch (error) {
-    console.error("Error fetching monthly collection:", error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
-
-exports.fees = asyncHandler(async(req,res,next)=>{
-  try {
-    console.log("1")
-    const bank = await BankDetails.find({});
-    res.json(bank);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
-  }
-   
-})
-
-exports.varify = asyncHandler(async (req, res, next) => {
-  try {
-    const { id } = req.params;
-
-    // Find the bank detail entry
-    const bankDetail = await BankDetails.findById(id);
-    if (!bankDetail) {
-      return res.status(404).json({ message: "Bank detail not found" });
-    }
-
-    // Update bank verification status
-    bankDetail.verified = true;
-    await bankDetail.save();
-
-    // Update corresponding user's fee status
-    const user = await User.findById(bankDetail.user);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    user.feeStatus = true;
-    await user.save();
-
-    res.status(200).json({ message: "Verification successful", bankDetail, user });
-  } catch (err) {
-    console.error("Error in verification:", err);
-    res.status(500).json({ message: "Internal server error" });
-  }
+  res.status(200).json({
+    month: now.toLocaleString("default", { month: "long" }),
+    year: now.getFullYear(),
+    totalAmount,
+    users,
+  });
 });
 
-exports.deleteBankDetail = asyncHandler(async (req, res, next) => {
-  try {
-    const { id } = req.params;
-
-    // Find and delete the bank detail
-    const bankDetail = await BankDetails.findByIdAndDelete(id);
-
-    if (!bankDetail) {
-      return res.status(404).json({ message: "Bank detail not found" });
-    }
-
-    res.status(200).json({ message: "Bank detail deleted successfully" });
-  } catch (err) {
-    console.error("Error deleting bank detail:", err);
-    res.status(500).json({ message: "Internal server error" });
-  }
+// =========================
+// Bank Details
+// =========================
+exports.fees = asyncHandler(async (req, res) => {
+  const bank = await BankDetails.find({});
+  res.json(bank);
 });
 
+exports.varify = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const bankDetail = await BankDetails.findById(id);
+  if (!bankDetail) return res.status(404).json({ message: "Bank detail not found" });
 
+  bankDetail.verified = true;
+  await bankDetail.save();
+
+  const user = await User.findById(bankDetail.user);
+  if (!user) return res.status(404).json({ message: "User not found" });
+
+  user.feeStatus = true;
+  await user.save();
+
+  res.status(200).json({ message: "Verification successful", bankDetail, user });
+});
+
+exports.deleteBankDetail = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const bankDetail = await BankDetails.findByIdAndDelete(id);
+  if (!bankDetail) return res.status(404).json({ message: "Bank detail not found" });
+  res.status(200).json({ message: "Bank detail deleted successfully" });
+});
+
+// =========================
+// Plans Management
+// =========================
 exports.getPlans = asyncHandler(async (req, res) => {
   const plans = await Plan.find();
   res.json({ success: true, plans });
 });
 
-// Add a new plan
 exports.addPlan = asyncHandler(async (req, res) => {
-  console.log(req.body)
   const plan = await Plan.create(req.body);
   res.status(201).json({ success: true, plan });
 });
 
-// Update a plan
 exports.updatePlan = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const updatedPlan = await Plan.findByIdAndUpdate(id, req.body, { new: true });
@@ -270,7 +203,6 @@ exports.updatePlan = asyncHandler(async (req, res) => {
   res.json({ success: true, updatedPlan });
 });
 
-// Delete a plan
 exports.deletePlan = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const deleted = await Plan.findByIdAndDelete(id);

@@ -11,7 +11,10 @@ const BankDetailsTable = () => {
   useEffect(() => {
     const fetchBankDetails = async () => {
       try {
-        const response = await fetch("http://localhost:5000/admin/fees");
+        const response = await fetch("http://localhost:5000/admin/fees",{
+          method:"GET",
+          credentials: "include"
+        });
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -33,6 +36,7 @@ const BankDetailsTable = () => {
       const response = await fetch(`http://localhost:5000/admin/varify/${id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
       });
 
       if (!response.ok) throw new Error("Failed to verify");
@@ -55,6 +59,7 @@ const BankDetailsTable = () => {
     try {
       const response = await fetch(`http://localhost:5000/admin/delete/${id}`, {
         method: "DELETE",
+        credentials: "include",
       });
 
       if (!response.ok) throw new Error("Failed to delete record");

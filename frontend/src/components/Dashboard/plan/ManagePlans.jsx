@@ -41,6 +41,7 @@ const ManagePlans = () => {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
+        credentials: "include",
       });
       const data = await res.json();
 
@@ -72,6 +73,7 @@ const ManagePlans = () => {
     try {
       const res = await fetch(`http://localhost:5000/admin/plans/${id}`, {
         method: "DELETE",
+        credentials: "include",
       });
       const data = await res.json();
       if (data.success) {
