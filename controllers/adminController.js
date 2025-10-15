@@ -132,13 +132,12 @@ exports.getSeats = asyncHandler(async (req, res) => {
 // Monthly Collection
 // =========================
 exports.getMonthlyCollection = asyncHandler(async (req, res) => {
+  console.log("month")
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
   const users = await User.find({
     feeStatus: true,
-    endDate: { $gte: startOfMonth, $lte: endOfMonth },
+    endDate: { $gte: startOfMonth},
   }).select("name membershipType plan fees endDate");
 
   const totalAmount = users.reduce((sum, user) => sum + user.fees, 0);

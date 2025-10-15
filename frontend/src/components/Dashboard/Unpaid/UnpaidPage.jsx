@@ -8,7 +8,7 @@ const MembersPage = () => {
   const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:5000/admin/members", { credentials: "include" })
+    fetch("http://localhost:5000/admin/unpaid-users", { credentials: "include" })
       .then(res => res.json())
       .then(data => setMembers(data))
       .catch(err => console.error(err));
