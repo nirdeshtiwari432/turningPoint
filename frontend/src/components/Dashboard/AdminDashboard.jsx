@@ -9,7 +9,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchMonthlyCollection = async () => {
       try {
-        const res = await fetch("/admin/monthly-collection", {
+        const res = await fetch("http://localhost:5000/admin/monthly-collection", {
           credentials: "include",
         });
         const result = await res.json();
