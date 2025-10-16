@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import DashboardHeader from "../DashboardHeader";
 import "./managePlans.css";
 
 const ManagePlans = () => {
@@ -12,6 +13,7 @@ const ManagePlans = () => {
     reserved: false,
   });
   const [editId, setEditId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   // Fetch all plans
   const fetchPlans = async () => {
@@ -31,6 +33,8 @@ const ManagePlans = () => {
   // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    
     const method = editId ? "PUT" : "POST";
     const url = editId
       ? `http://localhost:5000/admin/plans/${editId}`
@@ -63,6 +67,8 @@ const ManagePlans = () => {
     } catch (err) {
       console.error("Error saving plan:", err);
       alert("Error saving plan.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -110,132 +116,202 @@ const ManagePlans = () => {
   }, [form.category]);
 
   return (
-    <div className="manage-plans-container">
-      <h2>Manage Membership Plans</h2>
-
-      {/* Form Section */}
-      <form className="plan-form" onSubmit={handleSubmit}>
-        <div className="form-row">
-          <input
-            type="text"
-            placeholder="Plan Title"
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-            required
-          />
-          <input
-            type="number"
-            placeholder="Price (₹)"
-            value={form.price}
-            onChange={(e) => setForm({ ...form, price: e.target.value })}
-            required
-          />
+    <DashboardHeader>
+      <div className="plans-page-content">
+        <div className="page-header-section">
+          <div>
+            <h1 className="page-title">Manage Membership Plans</h1>
+            <p className="page-subtitle">Create and manage different membership plans for your gym</p>
+          </div>
         </div>
 
-        <div className="form-row">
-          <select
-            value={form.category}
-            onChange={(e) => setForm({ ...form, category: e.target.value })}
-          >
-            <option value="seat">Seat Plan</option>
-            <option value="longterm">Long Term Plan</option>
-          </select>
+        <div className="content-section">
+          <div className="plans-container">
+            {/* Form Section */}
+            <div className="form-card">
+              <h3>{editId ? "Edit Plan" : "Add New Plan"}</h3>
+              <form className="plan-form" onSubmit={handleSubmit}>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Plan Title</label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Morning Shift, Annual Membership"
+                      value={form.title}
+                      onChange={(e) => setForm({ ...form, title: e.target.value })}
+                      required
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Price (₹)</label>
+                    <input
+                      type="number"
+                      placeholder="Enter price"
+                      value={form.price}
+                      onChange={(e) => setForm({ ...form, price: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
 
-          {form.category === "seat" ? (
-            <input
-              type="text"
-              placeholder="Timing (e.g., 10 AM - 4 PM)"
-              value={form.timing}
-              onChange={(e) => setForm({ ...form, timing: e.target.value })}
-            />
-          ) : (
-            <input
-              type="text"
-              placeholder="Duration (e.g., 6 months)"
-              value={form.duration}
-              onChange={(e) => setForm({ ...form, duration: e.target.value })}
-            />
-          )}
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Category</label>
+                    <select
+                      value={form.category}
+                      onChange={(e) => setForm({ ...form, category: e.target.value })}
+                    >
+                      <option value="seat">Seat Plan</option>
+                      <option value="longterm">Long Term Plan</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>
+                      {form.category === "seat" ? "Timing" : "Duration"}
+                    </label>
+                    {form.category === "seat" ? (
+                      <input
+                        type="text"
+                        placeholder="e.g., 6:00 AM - 12:00 PM"
+                        value={form.timing}
+                        onChange={(e) => setForm({ ...form, timing: e.target.value })}
+                      />
+                    ) : (
+                      <input
+                        type="text"
+                        placeholder="e.g., 6 months, 1 year"
+                        value={form.duration}
+                        onChange={(e) => setForm({ ...form, duration: e.target.value })}
+                      />
+                    )}
+                  </div>
+                </div>
+
+                {form.category === "seat" && (
+                  <div className="form-group checkbox-group">
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={form.reserved}
+                        onChange={(e) => setForm({ ...form, reserved: e.target.checked })}
+                      />
+                      <span className="checkmark"></span>
+                      Reserved Seat
+                    </label>
+                  </div>
+                )}
+
+                <div className="form-actions">
+                  <button 
+                    type="submit" 
+                    className="btn-primary"
+                    disabled={loading}
+                  >
+                    {loading ? "Saving..." : (editId ? "Update Plan" : "Add Plan")}
+                  </button>
+
+                  {editId && (
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      onClick={() => {
+                        setForm({
+                          title: "",
+                          price: "",
+                          category: "seat",
+                          timing: "",
+                          duration: "",
+                          reserved: false,
+                        });
+                        setEditId(null);
+                      }}
+                    >
+                      Cancel Edit
+                    </button>
+                  )}
+                </div>
+              </form>
+            </div>
+
+            {/* Table Section */}
+            <div className="table-card">
+              <div className="card-header">
+                <div>
+                  <h3 className="card-title">Current Plans</h3>
+                  <p className="card-subtitle">Total {plans.length} plan{plans.length !== 1 ? 's' : ''}</p>
+                </div>
+              </div>
+
+              <div className="card-body">
+                <div className="table-container">
+                  <table className="plans-table">
+                    <thead>
+                      <tr>
+                        <th>Plan Title</th>
+                        <th>Price</th>
+                        <th>Category</th>
+                        <th>Timing/Duration</th>
+                        <th>Reserved</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {plans.map((plan) => (
+                        <tr key={plan._id}>
+                          <td className="plan-title">{plan.title}</td>
+                          <td className="plan-price">₹{plan.price}</td>
+                          <td>
+                            <span className={`category-badge ${plan.category}`}>
+                              {plan.category === "seat" ? "Seat Plan" : "Long Term"}
+                            </span>
+                          </td>
+                          <td>
+                            {plan.category === "seat" ? plan.timing : plan.duration}
+                          </td>
+                          <td>
+                            <span className={`reserved-status ${plan.reserved ? 'yes' : 'no'}`}>
+                              {plan.reserved ? "Yes" : "No"}
+                            </span>
+                          </td>
+                          <td>
+                            <div className="action-buttons">
+                              <button 
+                                className="btn-edit"
+                                onClick={() => handleEdit(plan)}
+                              >
+                                Edit
+                              </button>
+                              <button 
+                                className="btn-delete"
+                                onClick={() => handleDelete(plan._id)}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                      {plans.length === 0 && (
+                        <tr>
+                          <td colSpan="6" className="no-data">
+                            <div className="no-plans-message">
+                              <p>No plans found</p>
+                              <span>Add your first plan using the form above</span>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-
-        {form.category === "seat" && (
-          <label className="reserved-checkbox">
-            <input
-              type="checkbox"
-              checked={form.reserved}
-              onChange={(e) => setForm({ ...form, reserved: e.target.checked })}
-            />
-            Reserved Seat
-          </label>
-        )}
-
-        <div className="form-buttons">
-          <button type="submit" className="btn btn-primary">
-            {editId ? "Update Plan" : "Add Plan"}
-          </button>
-
-          {editId && (
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => {
-                setForm({
-                  title: "",
-                  price: "",
-                  category: "seat",
-                  timing: "",
-                  duration: "",
-                  reserved: false,
-                });
-                setEditId(null);
-              }}
-            >
-              Cancel
-            </button>
-          )}
-        </div>
-      </form>
-
-      {/* Table Section */}
-      <table className="plan-table">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Price</th>
-            <th>Category</th>
-            <th>Timing/Duration</th>
-            <th>Reserved</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {plans.map((plan) => (
-            <tr key={plan._id}>
-              <td>{plan.title}</td>
-              <td>₹{plan.price}</td>
-              <td>{plan.category}</td>
-              <td>{plan.category === "seat" ? plan.timing : plan.duration}</td>
-              <td>{plan.reserved ? "Yes" : "No"}</td>
-              <td>
-                <button className="btn btn-warning" onClick={() => handleEdit(plan)}>
-                  Edit
-                </button>
-                <button className="btn btn-danger" onClick={() => handleDelete(plan._id)}>
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-          {plans.length === 0 && (
-            <tr>
-              <td colSpan="6" className="text-center">
-                No plans found
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
+      </div>
+    </DashboardHeader>
   );
 };
 

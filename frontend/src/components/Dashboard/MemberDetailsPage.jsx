@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DashboardHeader from "./DashboardHeader";
 import UserDetailsCard from "./UserDetailsCard";
-
+import "./MemberDetail.css"
 const MemberDetailsPage = () => {
   const { id } = useParams();
   const [user, setUser] = useState(null);
@@ -14,13 +14,17 @@ const MemberDetailsPage = () => {
       .catch((err) => console.error(err));
   }, [id]);
 
-  if (!user) return <p className="text-center my-4">Loading...</p>;
-
   return (
-    <div className="bg-light">
-      <DashboardHeader />
-      <UserDetailsCard user={user} />
-    </div>
+    <DashboardHeader>
+      {/* Remove the container-fluid and row divs - let DashboardHeader handle layout */}
+      {!user ? (
+        <div className="text-center my-4">
+          <p>Loading...</p>
+        </div>
+      ) : (
+        <UserDetailsCard user={user} />
+      )}
+    </DashboardHeader>
   );
 };
 

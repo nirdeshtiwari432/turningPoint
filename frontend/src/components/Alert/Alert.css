@@ -31,3 +31,59 @@
   font-size: 1.1rem;
   color: #4b5563;
 }
+
+/* ============================= */
+/*      RESPONSIVE DESIGN        */
+/* ============================= */
+
+/* Tablets (≤1024px) */
+@media (max-width: 1024px) {
+  .alerts-page {
+    max-width: 700px;
+    margin: 100px auto 40px;
+    padding: 0 15px;
+  }
+
+  .alerts-page h2 {
+    font-size: 1.6rem;
+  }
+
+  .alert-card {
+    font-size: 0.95rem;
+    padding: 14px 18px;
+  }
+
+  .no-alerts {
+    font-size: 1rem;
+  }
+}
+
+/* Mobile (≤640px) */
+@media (max-width: 640px) {
+  .alerts-page {
+    max-width: 100%;
+    margin: 80px 0 30px;
+    padding: 0 12px;
+  }
+
+  .alerts-page h2 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+  }
+
+  .alerts-container {
+    gap: 12px;
+  }
+
+  .alert-card {
+    font-size: 0.9rem;
+    padding: 12px 16px;
+    border-left-width: 4px;
+  }
+
+  .no-alerts {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    padding: 0 10px;
+  }
+}

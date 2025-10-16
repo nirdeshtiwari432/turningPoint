@@ -1,51 +1,113 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-
+import "./UnpaidTable.css"
 const UnpaidTable = ({ members }) => {
   const navigate = useNavigate();
+  const unpaidMembers = members.filter((member) => !member.feeStatus);
 
-  // ✅ Filter only users whose feeStatus is false
-  const unpaidMembers = members.filter((member) => member.feeStatus === false);
+  // Simple inline styles
+  const styles = {
+    container: {
+      background: 'white',
+      borderRadius: '8px',
+      boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+      overflow: 'hidden'
+    },
+    cardHeader: {
+      background: '#f8f9fa',
+      padding: '20px 25px',
+      borderBottom: '1px solid #dee2e6'
+    },
+    table: {
+      width: '100%',
+      borderCollapse: 'collapse'
+    },
+    th: {
+      background: '#2c3e50',
+      color: 'white',
+      padding: '12px 15px',
+      border: '1px solid #dee2e6',
+      textAlign: 'left',
+      fontWeight: '600'
+    },
+    td: {
+      padding: '12px 15px',
+      border: '1px solid #dee2e6',
+      textAlign: 'left'
+    },
+    evenRow: {
+      background: '#f8f9fa'
+    },
+    viewBtn: {
+      background: '#007bff',
+      color: 'white',
+      border: 'none',
+      padding: '6px 12px',
+      borderRadius: '4px',
+      cursor: 'pointer'
+    },
+    noData: {
+      textAlign: 'center',
+      padding: '40px 20px',
+      color: '#6c757d'
+    }
+  };
 
   return (
-    <div className="table-responsive mt-4">
-      <h4 className="mb-3">📌 Unpaid Members</h4>
+    <div style={styles.container}>
+      <div style={styles.cardHeader}>
+        <h3 style={{ margin: '0 0 5px 0', color: '#2c3e50' }}>
+          Unpaid Members List
+        </h3>
+        <p style={{ margin: '0', color: '#6c757d' }}>
+          Total {unpaidMembers.length} unpaid member{unpaidMembers.length !== 1 ? 's' : ''}
+        </p>
+      </div>
 
-      {unpaidMembers.length === 0 ? (
-        <p className="text-muted">✅ All members have paid their fees.</p>
-      ) : (
-        <table className="table table-bordered table-hover shadow-sm">
-          <thead className="table-dark">
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Contact</th>
-              <th>Membership</th>
-              <th>Plan</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {unpaidMembers.map((member) => (
-              <tr key={member._id}>
-                <td>{member.name}</td>
-                <td>{member.email || "—"}</td>
-                <td>{member.number}</td>
-                <td>{member.membershipType}</td>
-                <td>{member.plan}</td>
-                <td>
-                  <button
-                    className="btn btn-primary btn-sm"
-                    onClick={() => navigate(`/members/${member._id}`)}
-                  >
-                    View Details
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <div>
+        {unpaidMembers.length === 0 ? (
+          <div style={styles.noData}>
+            <h4 style={{ color: '#495057', marginBottom: '10px' }}>All Clear!</h4>
+            <p>All members have paid their fees.</p>
+          </div>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table style={styles.table}>
+              <thead>
+                <tr>
+                  <th style={styles.th}>S.No.</th>
+                  <th style={styles.th}>NAME</th>
+                  <th style={styles.th}>EMAIL</th>
+                  <th style={styles.th}>CONTACT</th>
+                  <th style={styles.th}>MEMBERSHIP</th>
+                  <th style={styles.th}>PLAN</th>
+                  <th style={styles.th}>ACTION</th>
+                </tr>
+              </thead>
+              <tbody>
+                {unpaidMembers.map((member, index) => (
+                  <tr key={member._id || index} style={index % 2 === 0 ? styles.evenRow : {}}>
+                    <td style={styles.td}>{index + 1}</td>
+                    <td style={styles.td}>{member.name || 'N/A'}</td>
+                    <td style={styles.td}>{member.email || 'N/A'}</td>
+                    <td style={styles.td}>{member.phone || member.number || 'N/A'}</td>
+                    <td style={styles.td}>{member.membershipType || member.membership || 'N/A'}</td>
+                    <td style={styles.td}>{member.plan || 'N/A'}</td>
+                    <td style={styles.td}>
+                      <button
+                        style={styles.viewBtn}
+                        onClick={() => navigate(`/members/${member._id}`)}
+                      >
+                        View Details
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

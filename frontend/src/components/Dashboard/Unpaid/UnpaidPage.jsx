@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import DashboardHeader from "../DashboardHeader";
 import UnpaidTable from "./UnpaidTable";
-import UserDetailsCard from "../UserDetailsCard";
 
-const MembersPage = () => {
+const UnpaidPage = () => {
   const [members, setMembers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
     fetch("http://localhost:5000/admin/unpaid-users", { credentials: "include" })
@@ -14,16 +12,28 @@ const MembersPage = () => {
       .catch(err => console.error(err));
   }, []);
 
+  const unpaidCount = members.filter(member => !member.feeStatus).length;
+
   return (
-    <div className="bg-light">
-      <DashboardHeader />
-      <div className="container my-4">
-        <h3>Member Details</h3>
+    <DashboardHeader>
+      <div className="unpaid-page-container">
+        {/* Improved Header with better spacing */}
+        <div className="page-header-section">
+          <div className="header-content">
+            <h1 className="page-title">Unpaid Members</h1>
+            <p className="page-subtitle">
+              Manage unpaid member accounts • {unpaidCount} member{unpaidCount !== 1 ? 's' : ''} pending payment
+            </p>
+          </div>
+        </div>
+        
+        {/* Content Area */}
+        <div className="content-section">
+          <UnpaidTable members={members} />
+        </div>
       </div>
-      <UnpaidTable members={members} setUser={setSelectedUser} />
-      {selectedUser && <UserDetailsCard user={selectedUser} />}
-    </div>
+    </DashboardHeader>
   );
 };
 
-export default MembersPage;
+export default UnpaidPage;

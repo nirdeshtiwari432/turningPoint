@@ -1,3 +1,5 @@
+/* SignupPage.css - Fully Responsive & Enhanced */
+
 .signup-page {
   display: flex;
   justify-content: center;
@@ -37,6 +39,7 @@
   font-size: 16px;
 }
 
+/* Form Grid */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -72,6 +75,7 @@
   outline: none;
 }
 
+/* File Upload */
 .file-upload {
   border: 2px dashed #ccc;
   padding: 25px;
@@ -99,10 +103,12 @@
   margin-top: 6px;
 }
 
+/* Full Width Inputs */
 .full-width {
   grid-column: span 2;
 }
 
+/* Buttons */
 .btn {
   padding: 16px;
   border: none;
@@ -123,4 +129,58 @@
 .btn.primary:hover {
   background: #0056b3;
   transform: translateY(-2px);
+}
+
+/* ============================= */
+/*      RESPONSIVE DESIGN        */
+/* ============================= */
+
+/* Tablets (≤768px) */
+@media (max-width: 768px) {
+  .signup-page {
+    padding: 40px 15px;
+  }
+
+  .signup-container {
+    padding: 35px 25px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width {
+    grid-column: span 1;
+  }
+}
+
+/* Small Mobile (≤480px) */
+@media (max-width: 480px) {
+  .signup-container {
+    padding: 25px 20px;
+  }
+
+  .signup-container h2 {
+    font-size: 24px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .file-upload {
+    padding: 20px;
+  }
+
+  .btn {
+    padding: 14px;
+    font-size: 15px;
+  }
 }
