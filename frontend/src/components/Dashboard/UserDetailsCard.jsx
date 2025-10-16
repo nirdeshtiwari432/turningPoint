@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import "./UserDetailsCard.css"
 const UserDetailsCard = ({ user }) => {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("contact");
 
   // ✅ Mark user as new if startDate is missing
   const isNewUser = !user.startDate;
@@ -29,53 +30,147 @@ const UserDetailsCard = ({ user }) => {
   };
 
   return (
-    <div className="container my-5">
-      <div className={`card w-100 ${isNewUser ? "border-success" : "border-secondary"}`}>
-        <div className={`card-header ${isNewUser ? "bg-success" : "bg-primary"} text-white d-flex justify-content-between align-items-center`}>
-          <h2 className="mb-0">User Details</h2>
-          {isNewUser && <span className="badge bg-warning text-dark">New User</span>}
+    <div className="dashboard-container">
+      {/* Sidebar */}
+      <div className="sidebar">
+        <div className="sidebar-header">
+          <h2>Turning Point</h2>
+        </div>
+        
+        <nav className="sidebar-nav">
+          <div className="nav-section">
+            <div className="nav-item active">Dashboard</div>
+            <div className="nav-item active">Members</div>
+          </div>
+          
+          <div className="user-profile-section">
+            <div className="user-avatar">
+              <img
+                src={user.profilePic || "https://via.placeholder.com/150"}
+                alt="Profile"
+                className="avatar-img"
+              />
+            </div>
+            <h3 className="user-name">{user.name}</h3>
+            <p className="user-id">Member ID: {user._id}</p>
+            <p className="join-date">Joined: {user.startDate ? new Date(user.startDate).toLocaleDateString("en-GB") : "N/A"}</p>
+            
+            <div className="user-actions">
+              <button 
+                className="btn-edit-profile"
+                onClick={() => navigate(`/members/${user._id}/edit`)}
+              >
+                Edit Profile
+              </button>
+              <button className="btn-deactivate" onClick={handleDelete}>
+                Delete
+              </button>
+            </div>
+          </div>
+
+          <div className="nav-section">
+            <div className="nav-item">New Member</div>
+            <div className="nav-item">Settings</div>
+            <div className="nav-item">Support</div>
+          </div>
+        </nav>
+      </div>
+
+      {/* Main Content */}
+      <div className="main-content">
+        <div className="content-header">
+          <h1>Member Details</h1>
+          {isNewUser && <span className="new-badge">New User</span>}
         </div>
 
-        <div className="card-body text-center">
-          {/* Profile Picture */}
-          <div className="mb-4">
-            <img
-              src={user.profilePic || "https://via.placeholder.com/150"}
-              alt="Profile"
-              className="rounded-circle"
-              style={{ width: "150px", height: "150px", objectFit: "cover" }}
-            />
-          </div>
+        {/* Tab Navigation - Only Contact Info and Membership */}
+        <div className="tab-navigation">
+          <button 
+            className={`tab-btn ${activeTab === "contact" ? "active" : ""}`}
+            onClick={() => setActiveTab("contact")}
+          >
+            Contact Info
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === "membership" ? "active" : ""}`}
+            onClick={() => setActiveTab("membership")}
+          >
+            Membership
+          </button>
+        </div>
 
-          {[ 
-            { label: "Name", value: user.name },
-            { label: "Email", value: user.email || "-" },
-            { label: "Number", value: user.number },
-            { label: "Seat", value: user.seat?.seatNo || "N/A" },
-            { label: "Membership", value: user.membershipType },
-            { label: "Plan", value: user.plan },
-            { label: "Shift", value: user.shift },
-            { label: "Fees", value: `₹${user.fees}` },
-            { label: "Start Date", value: user.startDate ? new Date(user.startDate).toLocaleDateString("en-GB") : "-" },
-            { label: "End Date", value: user.endDate ? new Date(user.endDate).toLocaleDateString("en-GB") : "-" },
-          ].map((field, idx) => (
-            <div className="row mb-2" key={idx}>
-              <div className="col-sm-4 fw-bold text-end">{field.label}:</div>
-              <div className="col-sm-8 text-start">{field.value}</div>
+        {/* Tab Content */}
+        <div className="tab-content">
+          {activeTab === "contact" && (
+            <div className="contact-info">
+              <div className="info-card">
+                <div className="info-item">
+                  <span className="info-label">Phone</span>
+                  <span className="info-value">{user.number || "N/A"}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Email</span>
+                  <span className="info-value">{user.email || "N/A"}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Address</span>
+                  <span className="info-value">
+                    {user.address || "123 Main St, Anytown USA"}
+                  </span>
+                </div>
+              </div>
             </div>
-          ))}
+          )}
 
-          <div className="mt-4 d-flex justify-content-center gap-2">
-            <button
-              className="btn btn-warning"
-              onClick={() => navigate(`/members/${user._id}/edit`)}
-            >
-              Edit
-            </button>
-            <button className="btn btn-danger" onClick={handleDelete}>
-              Delete
-            </button>
-          </div>
+          {activeTab === "membership" && (
+            <div className="membership-info">
+              <div className="info-grid">
+                <div className="info-card">
+                  <h4>Membership Details</h4>
+                  <div className="info-item">
+                    <span className="info-label">Membership Type</span>
+                    <span className="info-value">{user.membershipType || "N/A"}</span>
+                  </div>
+                  <div className="info-item">
+                    <span className="info-label">Plan</span>
+                    <span className="info-value">{user.plan || "N/A"}</span>
+                  </div>
+                  <div className="info-item">
+                    <span className="info-label">Shift</span>
+                    <span className="info-value">{user.shift || "N/A"}</span>
+                  </div>
+                </div>
+
+                <div className="info-card">
+                  <h4>Financial Details</h4>
+                  <div className="info-item">
+                    <span className="info-label">Fees</span>
+                    <span className="info-value">{user.fees ? `₹${user.fees}` : "N/A"}</span>
+                  </div>
+                  <div className="info-item">
+                    <span className="info-label">Seat</span>
+                    <span className="info-value">{user.seat?.seatNo || "N/A"}</span>
+                  </div>
+                </div>
+
+                <div className="info-card">
+                  <h4>Date Information</h4>
+                  <div className="info-item">
+                    <span className="info-label">Start Date</span>
+                    <span className="info-value">
+                      {user.startDate ? new Date(user.startDate).toLocaleDateString("en-GB") : "N/A"}
+                    </span>
+                  </div>
+                  <div className="info-item">
+                    <span className="info-label">End Date</span>
+                    <span className="info-value">
+                      {user.endDate ? new Date(user.endDate).toLocaleDateString("en-GB") : "N/A"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

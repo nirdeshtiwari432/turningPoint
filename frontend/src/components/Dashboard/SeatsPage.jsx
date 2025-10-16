@@ -9,18 +9,25 @@ const SeatsPage = () => {
   useEffect(() => {
     fetch(`http://localhost:5000/admin/seats?filter=${filter}`, { credentials: "include" })
       .then(res => res.json())
-      .then(data => setSeats(data.seats))
+      .then(data => setSeats(data.seats || []))
       .catch(err => console.error(err));
   }, [filter]);
 
   return (
-    <div className="bg-light">
-      <DashboardHeader/>
-      <div className="container my-4">
-        <h3>Seat Details</h3>
+    <DashboardHeader>
+      <div className="seats-page-content">
+        <div className="page-header-section">
+          <div>
+            <h1 className="page-title">Seat Details</h1>
+            <p className="page-subtitle">Manage seat bookings and availability</p>
+          </div>
+        </div>
+        
+        <div className="content-section">
+          <SeatsTable seats={seats} filter={filter} setFilter={setFilter} />
+        </div>
       </div>
-      <SeatsTable seats={seats} filter={filter} setFilter={setFilter} />
-    </div>
+    </DashboardHeader>
   );
 };
 

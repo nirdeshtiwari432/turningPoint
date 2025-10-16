@@ -1,4 +1,4 @@
-/* BankDetailsTable.css */
+/* BankDetailsTable.css - Fully Responsive & Enhanced */
 
 .bank-details-container {
   padding: 20px;
@@ -15,6 +15,7 @@
   width: 100%;
   border-collapse: collapse;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
 }
 
 .bank-details-table th,
@@ -22,6 +23,7 @@
   border: 1px solid #ddd;
   padding: 12px 15px;
   text-align: left;
+  white-space: nowrap;
 }
 
 .bank-details-table th {
@@ -41,4 +43,154 @@
 
 .bank-details-table td {
   color: #555;
+}
+
+/* ============================= */
+/*      RESPONSIVE DESIGN        */
+/* ============================= */
+
+/* Tablets (≤1024px) */
+@media (max-width: 1024px) {
+  .bank-details-container {
+    padding: 15px;
+  }
+
+  .bank-details-container h2 {
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+  }
+
+  .bank-details-table th,
+  .bank-details-table td {
+    padding: 10px 12px;
+    font-size: 0.95rem;
+  }
+}
+
+/* Mobile (≤640px) - Stacked Card Layout */
+@media (max-width: 640px) {
+  .bank-details-container {
+    padding: 10px;
+  }
+
+  .bank-details-container h2 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+  }
+
+  .bank-details-table,
+  .bank-details-table thead,
+  .bank-details-table tbody,
+  .bank-details-table th,
+  .bank-details-table td,
+  .bank-details-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .bank-details-table thead {
+    display: none;
+  }
+
+  .bank-details-table tr {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    padding: 10px;
+  }
+
+  .bank-details-table td {
+    text-align: right;
+    padding: 10px;
+    position: relative;
+    font-size: 0.9rem;
+    border: none;
+    border-bottom: 1px solid #eee;
+  }
+
+  .bank-details-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    width: 50%;
+    text-align: left;
+    font-weight: bold;
+    color: #333;
+    text-transform: capitalize;
+  }
+
+  .bank-details-table td:last-child {
+    border-bottom: none;
+  }
+}
+
+/* Extra small mobile adjustments (<360px) */
+@media (max-width: 360px) {
+  .bank-details-container h2 {
+    font-size: 1.2rem;
+  }
+
+  .bank-details-table td::before {
+    width: 45%;
+    font-size: 0.85rem;
+  }
+}
+
+/* Loading state */
+.loading-row td {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+  .bank-details-table th {
+    background: #000;
+    color: #fff;
+  }
+
+  .bank-details-table td {
+    border: 2px solid #000;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .loading-row td {
+    animation: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .bank-details-container {
+    padding: 0;
+  }
+
+  .bank-details-table {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+
+  .bank-details-table tr {
+    border: 1px solid #000 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+
+  .bank-details-table th {
+    background: #f0f0f0 !important;
+    color: #000 !important;
+    border-color: #000 !important;
+  }
+
+  .bank-details-table td::before {
+    content: "";
+  }
 }

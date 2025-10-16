@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // 👈 for navigation
+import { useNavigate } from "react-router-dom";
 import "./Seat.css";
 import DashboardHeader from "./DashboardHeader";
 
@@ -32,72 +32,91 @@ const Seat = () => {
   };
 
   return (
-    <div className="container my-4">
-      <DashboardHeader />
-
-      <div className="card w-100">
-        <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-          <span>Seat Details</span>
-          <select
-            className="form-select w-auto"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          >
-            <option value="">All</option>
-            <option value="booked">Booked</option>
-            <option value="notBooked">Not Booked</option>
-            <option value="registered">Registered</option>
-            <option value="notRegistered">Not Registered</option>
-          </select>
+    <DashboardHeader>
+      <div className="seat-page-content">
+        <div className="page-header-section">
+          <div>
+            <h1 className="page-title">Seat Details</h1>
+            <p className="page-subtitle">Manage seat bookings</p>
+          </div>
         </div>
-
-        <div className="card-body">
-          {loading ? (
-            <p>Loading seat data...</p>
-          ) : (
-            <div className="table-responsive">
-              <table className="table table-bordered table-striped table-hover">
-                <thead className="table-dark">
-                  <tr>
-                    <th>Seat No</th>
-                    <th>Is Booked</th>
-                    <th>Booked By</th>
-                    <th>Timing</th>
-                    <th className="text-center">Book</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {seats.length > 0 ? (
-                    seats.map((seat) => (
-                      <tr key={seat._id}>
-                        <td>{seat.seatNo}</td>
-                        <td>{seat.isBooked ? "Yes" : "No"}</td>
-                        <td>{seat.bookedBy?.name || "-"}</td>
-                        <td>{seat.timing?.replace("_", " ") || "-"}</td>
-                        <td className="text-center">
-                          <button
-                            className="btn btn-primary btn-sm"
-                            onClick={() => handleBook(seat._id, seat.seatNo)}
-                          >
-                            Book
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="5" className="text-center">
-                        No records found
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+        
+        <div className="content-section">
+          <div className="table-card">
+            <div className="card-header">
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <h3 className="card-title">Seat Booking Status</h3>
+                  <p className="card-subtitle">
+                    Total {seats.length} seat{seats.length !== 1 ? 's' : ''}
+                  </p>
+                </div>
+                <select
+                  className="filter-select"
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                >
+                  <option value="">All</option>
+                  <option value="booked">Booked</option>
+                  <option value="notBooked">Not Booked</option>
+                  <option value="registered">Registered</option>
+                  <option value="notRegistered">Not Registered</option>
+                </select>
+              </div>
             </div>
-          )}
+
+            <div className="card-body">
+              {loading ? (
+                <div className="text-center py-4">
+                  <p>Loading seat data...</p>
+                </div>
+              ) : (
+                <div className="table-responsive">
+                  <table className="seats-table">
+                    <thead>
+                      <tr>
+                        <th>SEAT NO</th>
+                        <th>IS BOOKED</th>
+                        <th>BOOKED BY</th>
+                        <th>TIMING</th>
+                        <th>ACTION</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {seats.length > 0 ? (
+                        seats.map((seat) => (
+                          <tr key={seat._id}>
+                            <td className="text-center fw-bold">{seat.seatNo}</td>
+                            <td>{seat.isBooked ? "Yes" : "No"}</td>
+                            <td>{seat.bookedBy?.name || "-"}</td>
+                            <td>{seat.timing?.replace("_", " ") || "-"}</td>
+                            <td>
+                              <button
+                                className="btn btn-primary btn-sm"
+                                onClick={() => handleBook(seat._id, seat.seatNo)}
+                                disabled={seat.isBooked}
+                              >
+                                {seat.isBooked ? "Booked" : "Book"}
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="5" className="text-center py-4">
+                            No records found
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </DashboardHeader>
   );
 };
 

@@ -15,14 +15,27 @@ const MembersPage = () => {
   }, []);
 
   return (
-    <div className="bg-light">
-      <DashboardHeader />
-      <div className="container my-4">
-        <h3>Member Details</h3>
+    <DashboardHeader>
+      <div className="members-page-container">
+        {/* Page Header */}
+        <div className="page-header-section">
+          <h1 className="page-title">Member Details</h1>
+          <p className="page-subtitle">Manage all library members</p>
+        </div>
+
+        {/* Members Table */}
+        <div className="content-section">
+          <MembersTable members={members} setUser={setSelectedUser} />
+        </div>
+
+        {/* User Details Card - Shows when a user is selected */}
+        {selectedUser && (
+          <div className="content-section">
+            <UserDetailsCard user={selectedUser} />
+          </div>
+        )}
       </div>
-      <MembersTable members={members} setUser={setSelectedUser} />
-      {selectedUser && <UserDetailsCard user={selectedUser} />}
-    </div>
+    </DashboardHeader>
   );
 };
 

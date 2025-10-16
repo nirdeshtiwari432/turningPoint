@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./ProfilePage.css"; // We'll create this CSS file
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -44,7 +45,6 @@ const ProfilePage = () => {
     formData.append("profilePic", file);
 
     try {
-      // ✅ Match backend route
       const res = await fetch("http://localhost:5000/user/upload-photo", {
         method: "POST",
         body: formData,
@@ -86,44 +86,108 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="container my-5">
-      <h2>My Profile</h2>
+    <div className="profile-container">
+      <div className="profile-card">
+        <h2 className="profile-title">My Profile</h2>
+        
+        <div className="profile-content">
+          {/* Left Side - Photo Upload */}
+          <div className="photo-section">
+            <div className="photo-upload">
+              <h3>Upload a photo</h3>
+              <div className="photo-preview">
+                <img
+                  src={user.profilePic || "/default-avatar.png"}
+                  alt="Profile"
+                  className="profile-image"
+                />
+              </div>
+              <div className="upload-controls">
+                <input 
+                  type="file" 
+                  id="file-input"
+                  accept="image/*" 
+                  onChange={handleFileChange} 
+                  className="file-input"
+                />
+                <label htmlFor="file-input" className="file-label">
+                  Choose File
+                </label>
+                <button className="upload-btn" onClick={handleUpload}>
+                  Upload Photo
+                </button>
+              </div>
+            </div>
+          </div>
 
-      <img
-        src={user.profilePic || "/default-avatar.png"}
-        alt="Profile"
-        width="150"
-        height="150"
-        style={{ borderRadius: "50%", objectFit: "cover" }}
-      />
+          {/* Right Side - Profile Details */}
+          <div className="details-section">
+            <div className="details-grid">
+              <div className="detail-item">
+                <span className="detail-label">Name</span>
+                <span className="detail-value">{user.name}</span>
+              </div>
+              
+              <div className="detail-item">
+                <span className="detail-label">Number</span>
+                <span className="detail-value phone-number">+91 {user.number}</span>
+              </div>
+              
+              <div className="detail-item">
+                <span className="detail-label">Plan</span>
+                <span className="detail-value">{user.plan}</span>
+              </div>
+              
+              <div className="detail-item">
+                <span className="detail-label">Start Date</span>
+                <span className="detail-value">{user.startDate?.slice(0, 10) || "-"}</span>
+              </div>
+              
+              <div className="detail-item">
+                <span className="detail-label">Seat</span>
+                <span className="detail-value">{user.seat || "-"}</span>
+              </div>
+              
+              <div className="detail-item">
+                <span className="detail-label">Email</span>
+                <span className="detail-value email">{user.email || "Not provided"}</span>
+              </div>
+              
+              <div className="detail-item">
+                <span className="detail-label">Membership Type</span>
+                <span className="detail-value">{user.membershipType}</span>
+              </div>
+              
+              <div className="detail-item">
+                <span className="detail-label">Shift</span>
+                <span className="detail-value">{user.shift}</span>
+              </div>
+              
+              <div className="detail-item">
+                <span className="detail-label">End Date</span>
+                <span className="detail-value">{user.endDate?.slice(0, 10) || "-"}</span>
+              </div>
+              
+              <div className="detail-item">
+                <span className="detail-label">Fees Paid</span>
+                <span className="detail-value fee-amount">${user.feesPaid || "500"}</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <div className="mt-3">
-        <input type="file" accept="image/*" onChange={handleFileChange} />
-        <button className="btn btn-success ms-2" onClick={handleUpload}>
-          Upload Photo
-        </button>
+        {/* Action Buttons */}
+        <div className="action-buttons">
+          {!user.feeStatus && (
+            <button className="pay-btn" onClick={handlePaymentClick}>
+              Pay Membership
+            </button>
+          )}
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
       </div>
-
-      <p><strong>Name:</strong> {user.name}</p>
-      <p><strong>Email:</strong> {user.email || "Not provided"}</p>
-      <p><strong>Number:</strong> {user.number}</p>
-      <p><strong>Membership Type:</strong> {user.membershipType}</p>
-      <p><strong>Plan:</strong> {user.plan}</p>
-      <p><strong>Shift:</strong> {user.shift}</p>
-      <p><strong>Start Date:</strong> {user.startDate?.slice(0, 10) || "-"}</p>
-      <p><strong>End Date:</strong> {user.endDate?.slice(0, 10) || "-"}</p>
-      <p><strong>Seat:</strong> {user.seat || "-"}</p>
-      <p><strong>Fees Paid:</strong> {user.feeStatus ? "Yes" : "No"}</p>
-
-      {!user.feeStatus && (
-        <button className="btn btn-primary mt-3" onClick={handlePaymentClick}>
-          Pay Membership
-        </button>
-      )}
-
-      <button className="btn btn-secondary mt-3 ms-3" onClick={handleLogout}>
-        Logout
-      </button>
     </div>
   );
 };

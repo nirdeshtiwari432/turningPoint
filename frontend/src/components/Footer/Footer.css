@@ -1,7 +1,9 @@
+/* ================= FOOTER ================= */
 .footer {
   background: #1e293b;
   color: #f8fafc;
   margin-top: auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .footer-container {
@@ -83,7 +85,7 @@
   font-weight: 500;
 }
 
-/* Updated Social Media Styles */
+/* Social Media */
 .social-links {
   display: flex;
   flex-direction: column;
@@ -94,8 +96,8 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: #94a3b8;
   text-decoration: none;
+  color: #94a3b8;
   transition: all 0.3s ease;
   font-size: 0.95rem;
   padding: 0.5rem;
@@ -141,7 +143,7 @@
   transform: scale(1.1);
 }
 
-/* Bottom Bar */
+/* Footer Bottom */
 .footer-bottom {
   border-top: 1px solid #475569;
   padding: 1.5rem 0;
@@ -175,7 +177,7 @@
   color: #3b82f6;
 }
 
-/* Responsive Design */
+/* ================= RESPONSIVE ================= */
 @media (max-width: 1024px) {
   .footer-sections {
     grid-template-columns: 1fr 1fr;
@@ -204,46 +206,21 @@
     gap: 1rem;
   }
 
-  
+  .social-links {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
 
+  .social-link {
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
 
-.social-links {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.social-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
-  color: #333;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-.social-link:hover {
-  color: #1e40af;
-}
-
-.social-icon {
-  font-size: 1.2rem;
-}
-
-/* Optional: color for each social media */
-.social-icon.facebook {
-  color: #3b5998;
-}
-
-.social-icon.instagram {
-  color: #e1306c;
-}
-
-.social-icon.x {
-  color: #1da1f2;
-}
-
+  .social-icon {
+    font-size: 1.2rem;
+  }
 }
 
 @media (max-width: 480px) {
