@@ -26,11 +26,13 @@ const DashboardHeader = ({ children }) => {
 
   const menuItems = [
     { path: "/dashboard", label: "Dashboard" },
+    {path :"/admin/transactions",label:"Transactions"},
     { path: "/members", label: "Member Details" },
     { path: "/unpaid", label: "Unpaid Member" },
     { path: "/plan", label: "Plan" },
     { path: "/seats", label: "Seat Details" },
     { path: "/admin/alert",label:"Alert"},
+    
   ];
 
   const isActive = (path) => location.pathname === path;

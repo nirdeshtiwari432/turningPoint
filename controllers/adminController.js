@@ -100,12 +100,46 @@ exports.updateUser = asyncHandler(async (req, res) => {
   res.json({ success: true, message: "User updated successfully", user: updatedUser });
 });
 
+
 exports.deleteUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const deletedUser = await User.findByIdAndDelete(id);
-  if (!deletedUser) return res.status(404).json({ success: false, message: "User not found" });
-  res.json({ success: true, message: "User deleted" });
+
+  // Find user
+  const user = await User.findById(id).populate("seat");
+  if (!user)
+    return res.status(404).json({ success: false, message: "User not found" });
+
+  // 1️⃣ Free up their seat
+  if (user.seat?._id) {
+    await AvailableSeat.findByIdAndUpdate(user.seat._id, {
+      isBooked: false,
+      bookedBy: null,
+    });
+  }
+
+  // 2️⃣ Delete profile photo from Cloudinary (if exists)
+  if (user.profilePic && !user.profilePic.includes("default-avatar.png")) {
+    try {
+      // Extract public_id from Cloudinary URL
+      const publicId = user.profilePic.split("/").pop().split(".")[0];
+      await cloudinary.uploader.destroy(`profile/${publicId}`);
+    } catch (err) {
+      console.error("Cloudinary delete error:", err.message);
+    }
+  }
+
+  // 3️⃣ Delete related BankDetails
+  await BankDetails.deleteMany({ user: user._id });
+
+  // 4️⃣ Delete the user
+  await User.findByIdAndDelete(id);
+
+  res.json({
+    success: true,
+    message: "User deleted successfully (profile photo + seat freed)",
+  });
 });
+
 
 exports.unpaid = asyncHandler(async (req, res) => {
   const users = await User.find({ feeStatus: false }).sort({ startDate: -1 });

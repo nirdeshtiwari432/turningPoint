@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "./BankDetailsTable.css";
 import { useNavigate } from "react-router-dom";
+import DashboardHeader from "../DashboardHeader";
 
 const BankDetailsTable = () => {
   const navigate = useNavigate();
   const [bankDetails, setBankDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchBankDetails = async () => {
@@ -71,67 +73,88 @@ const BankDetailsTable = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
+  // Filter data based on search input
+  const filteredDetails = bankDetails.filter((detail) =>
+    detail.accountHolder?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div className="bank-details-container">
-      <h2>Bank Details</h2>
-      <table className="bank-details-table">
-        <thead>
-          <tr>
-            <th>Account Holder</th>
-            <th>UPI Mobile</th>
-            <th>Plan</th>
-            <th>Amount</th>
-            <th>Verified</th>
-            <th>Submitted At</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {bankDetails.map((detail) => (
-            <tr key={detail._id || Math.random()}>
-              <td>{detail.accountHolder || "-"}</td>
-              <td>{detail.upiMobile || "-"}</td>
-              <td>{detail.plan || "-"}</td>
-              <td>{detail.amount || "-"}</td>
-              <td>{detail.verified ? "Yes" : "No"}</td>
-              <td>
-                {detail.submittedAt
-                  ? new Date(detail.submittedAt).toLocaleString()
-                  : "-"}
-              </td>
-              <td>
-                <div className="actions-cell">
-                  <button
-                    className="btn btn-primary btn-sm"
-                    onClick={() => navigate(`/members/${detail.user}`)}
-                  >
-                    View
-                  </button>
+    <DashboardHeader>
+      <div className="bank-details-container">
+        <div className="table-header d-flex justify-content-between align-items-center mb-3">
+          <h2>Bank Details</h2>
+          <input
+            type="text"
+            className="form-control w-25"
+            placeholder="Search by account holder name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
 
-                  {!detail.verified && detail._id && (
-                    <button
-                      className="btn btn-success btn-sm"
-                      onClick={() => handleVerify(detail._id)}
-                    >
-                      Verify
-                    </button>
-                  )}
+        {filteredDetails.length === 0 ? (
+          <p>No records found.</p>
+        ) : (
+          <table className="bank-details-table">
+            <thead>
+              <tr>
+                <th>Account Holder</th>
+                <th>UPI Mobile</th>
+                <th>Plan</th>
+                <th>Amount</th>
+                <th>Verified</th>
+                <th>Submitted At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredDetails.map((detail) => (
+                <tr key={detail._id || Math.random()}>
+                  <td>{detail.accountHolder || "-"}</td>
+                  <td>{detail.upiMobile || "-"}</td>
+                  <td>{detail.plan || "-"}</td>
+                  <td>{detail.amount || "-"}</td>
+                  <td>{detail.verified ? "Yes" : "No"}</td>
+                  <td>
+                    {detail.submittedAt
+                      ? new Date(detail.submittedAt).toLocaleString()
+                      : "-"}
+                  </td>
+                  <td>
+                    <div className="actions-cell">
+                      <button
+                        className="btn btn-primary btn-sm"
+                        onClick={() => navigate(`/members/${detail.user}`)}
+                      >
+                        View
+                      </button>
 
-                  {detail._id && (
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={() => handleDelete(detail._id)}
-                    >
-                      Delete
-                    </button>
-                  )}
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+                      {!detail.verified && detail._id && (
+                        <button
+                          className="btn btn-success btn-sm"
+                          onClick={() => handleVerify(detail._id)}
+                        >
+                          Verify
+                        </button>
+                      )}
+
+                      {detail._id && (
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={() => handleDelete(detail._id)}
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </DashboardHeader>
   );
 };
 

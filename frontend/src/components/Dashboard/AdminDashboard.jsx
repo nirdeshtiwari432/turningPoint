@@ -84,17 +84,7 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Today's Payments - Stacked Format */}
-        <div className="dashboard-card">
-          <div className="card-header">
-            <h3 className="card-title">Today's Payments</h3>
-          </div>
-          <div className="card-body">
-            <div className="table-container">
-              <BankDetailsTable> </BankDetailsTable>
-            </div>
-          </div>
-        </div>
+
 
       </div>
     </DashboardHeader>
