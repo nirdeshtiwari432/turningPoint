@@ -11,13 +11,12 @@ const BankDetailsTable = () => {
   useEffect(() => {
     const fetchBankDetails = async () => {
       try {
-        const response = await fetch("http://localhost:5000/admin/fees",{
-          method:"GET",
-          credentials: "include"
+        const response = await fetch("http://localhost:5000/admin/fees", {
+          method: "GET",
+          credentials: "include",
         });
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
+        if (!response.ok) throw new Error("Network response was not ok");
+
         const data = await response.json();
         setBankDetails(data);
         setLoading(false);
@@ -30,15 +29,14 @@ const BankDetailsTable = () => {
     fetchBankDetails();
   }, []);
 
-  // ✅ Verify handler
   const handleVerify = async (id) => {
+    if (!id) return;
     try {
       const response = await fetch(`http://localhost:5000/admin/varify/${id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
-
       if (!response.ok) throw new Error("Failed to verify");
 
       setBankDetails((prev) =>
@@ -52,8 +50,8 @@ const BankDetailsTable = () => {
     }
   };
 
-  // 🗑️ Delete handler
   const handleDelete = async (id) => {
+    if (!id) return;
     if (!window.confirm("Are you sure you want to delete this record?")) return;
 
     try {
@@ -61,10 +59,8 @@ const BankDetailsTable = () => {
         method: "DELETE",
         credentials: "include",
       });
-
       if (!response.ok) throw new Error("Failed to delete record");
 
-      // Remove deleted item from state
       setBankDetails((prev) => prev.filter((detail) => detail._id !== id));
       alert("Bank detail deleted successfully 🗑️");
     } catch (err) {
@@ -92,36 +88,44 @@ const BankDetailsTable = () => {
         </thead>
         <tbody>
           {bankDetails.map((detail) => (
-            <tr key={detail._id}>
-              <td>{detail.accountHolder}</td>
-              <td>{detail.upiMobile}</td>
-              <td>{detail.plan}</td>
-              <td>{detail.amount}</td>
+            <tr key={detail._id || Math.random()}>
+              <td>{detail.accountHolder || "-"}</td>
+              <td>{detail.upiMobile || "-"}</td>
+              <td>{detail.plan || "-"}</td>
+              <td>{detail.amount || "-"}</td>
               <td>{detail.verified ? "Yes" : "No"}</td>
-              <td>{new Date(detail.submittedAt).toLocaleString()}</td>
               <td>
-                <button
-                  className="btn btn-primary btn-sm"
-                  onClick={() => navigate(`/members/${detail.user}`)}
-                  style={{ marginRight: "5px" }}
-                >
-                  View
-                </button>
-                {!detail.verified && (
+                {detail.submittedAt
+                  ? new Date(detail.submittedAt).toLocaleString()
+                  : "-"}
+              </td>
+              <td>
+                <div className="actions-cell">
                   <button
-                    className="btn btn-success btn-sm"
-                    onClick={() => handleVerify(detail._id)}
-                    style={{ marginRight: "5px" }}
+                    className="btn btn-primary btn-sm"
+                    onClick={() => navigate(`/members/${detail.user}`)}
                   >
-                    Verify
+                    View
                   </button>
-                )}
-                <button
-                  className="btn btn-danger btn-sm"
-                  onClick={() => handleDelete(detail._id)}
-                >
-                  Delete
-                </button>
+
+                  {!detail.verified && detail._id && (
+                    <button
+                      className="btn btn-success btn-sm"
+                      onClick={() => handleVerify(detail._id)}
+                    >
+                      Verify
+                    </button>
+                  )}
+
+                  {detail._id && (
+                    <button
+                      className="btn btn-danger btn-sm"
+                      onClick={() => handleDelete(detail._id)}
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
               </td>
             </tr>
           ))}

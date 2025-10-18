@@ -54,18 +54,6 @@ const UserDetailsCard = ({ user }) => {
             <h3 className="user-name">{user.name}</h3>
             <p className="user-id">Member ID: {user._id}</p>
             <p className="join-date">Joined: {user.startDate ? new Date(user.startDate).toLocaleDateString("en-GB") : "N/A"}</p>
-            
-            <div className="user-actions">
-              <button 
-                className="btn-edit-profile"
-                onClick={() => navigate(`/members/${user._id}/edit`)}
-              >
-                Edit Profile
-              </button>
-              <button className="btn-deactivate" onClick={handleDelete}>
-                Delete
-              </button>
-            </div>
           </div>
 
           <div className="nav-section">
@@ -97,10 +85,22 @@ const UserDetailsCard = ({ user }) => {
           >
             Membership
           </button>
+          <div className="user-actions">
+              <button 
+                className="btn-edit-profile"
+                onClick={() => navigate(`/members/${user._id}/edit`)}
+              >
+                Edit Profile
+              </button>
+              <button className="btn-deactivate" onClick={handleDelete}>
+                Delete
+              </button>
+            </div>
         </div>
 
         {/* Tab Content */}
         <div className="tab-content">
+          <img src={user.profilePic || "https://via.placeholder.com/150"} alt="Profile" />
           {activeTab === "contact" && (
             <div className="contact-info">
               <div className="info-card">

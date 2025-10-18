@@ -1,19 +1,21 @@
 // seedWithPasswords.js
 require("dotenv").config();
 const mongoose = require("mongoose");
-const { User, Admin, AvailableSeat, Plan, BankDetails } = require("./models"); // adjust path if needed
+const { User, Admin, AvailableSeat, Plan, BankDetails } = require("./models");
 
 mongoose.set("strictQuery", false);
 
 async function connectDB() {
-  await mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+  await mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
   console.log("✅ Connected to MongoDB Atlas");
 }
 
 async function clearCollections() {
-  // only remove demo data to be safe in production (use with caution)
   await Promise.all([
-    User.deleteMany({}), // remove all users (if you only want demo users, change the filter)
+    User.deleteMany({}),
     Admin.deleteMany({}),
     AvailableSeat.deleteMany({}),
     Plan.deleteMany({}),
@@ -22,16 +24,45 @@ async function clearCollections() {
   console.log("🧹 Cleared target collections (users, admins, seats, plans, bankdetails)");
 }
 
+// ✅ valid shifts according to your schema
+function generateUsers() {
+  const users = [];
+  const shifts = ["morning", "night", "full"];
+  for (let i = 1; i <= 50; i++) {
+    const name = `User${i}`;
+    const email = `user${i}@example.com`;
+    const number = `9${String(100000000 + i).padStart(9, "0")}`;
+    const membershipType = i % 2 === 0 ? "reserved" : "non_reserved";
+    const plan = i % 3 === 0 ? "part_time" : "full_time";
+    const shift = shifts[i % 3]; // ✅ matches schema
+    const fees = plan === "full_time" ? 1500 : 1000;
+    const feeStatus = i % 4 !== 0; // 75% true
+    const password = "password123";
+
+    users.push({
+      data: {
+        name,
+        email,
+        number,
+        membershipType,
+        plan,
+        shift,
+        fees,
+        feeStatus,
+      },
+      password,
+    });
+  }
+  return users;
+}
+
 async function seedData() {
   try {
     await connectDB();
-
-    // OPTIONAL: clear existing demo data
-    // Be careful: this deletes all documents in these collections.
     await clearCollections();
 
     // --- SEATS ---
-    const seats = await AvailableSeat.insertMany([
+    await AvailableSeat.insertMany([
       { seatNo: 1, isBooked: false, timing: "full_time" },
       { seatNo: 2, isBooked: false, timing: "morning" },
       { seatNo: 3, isBooked: false, timing: "night" },
@@ -39,7 +70,7 @@ async function seedData() {
     console.log("✅ Demo Seats added");
 
     // --- PLANS ---
-    const plans = await Plan.insertMany([
+    await Plan.insertMany([
       {
         title: "Full-Time Plan",
         price: 1500,
@@ -66,109 +97,47 @@ async function seedData() {
     ]);
     console.log("✅ Demo Plans added");
 
-    // --- USERS (create with passport-local-mongoose so password hashing works) ---
-    // Example plain-text passwords (change before production)
-    const demoUsers = [
-      {
-        data: {
-          name: "Rohit Sharma",
-          email: "rohit@example.com",
-          number: "9990001111",
-          membershipType: "reserved",
-          plan: "full_time",
-          shift: "morning",
-          fees: 1500,
-          feeStatus: true,
-        },
-        password: "password123",
-      },
-      {
-        data: {
-          name: "Priya Verma",
-          email: "priya@example.com",
-          number: "8881112222",
-          membershipType: "non_reserved",
-          plan: "part_time",
-          shift: "night",
-          fees: 1000,
-          feeStatus: false,
-        },
-        password: "password123",
-      },
-      {
-        data: {
-          name: "Aman Gupta",
-          email: "aman@example.com",
-          number: "7773334444",
-          membershipType: "reserved",
-          plan: "full_time",
-          shift: "full",
-          fees: 2000,
-          feeStatus: true,
-        },
-        password: "password123",
-      },
-    ];
-
+    // --- USERS ---
+    const demoUsers = generateUsers();
     const createdUsers = [];
+
     for (const u of demoUsers) {
-      // create user instance (do NOT include password field here)
       const newUser = new User(u.data);
-      // register user with passport-local-mongoose which hashes the password
-      const created = await User.register(newUser, u.password);
+      const created = await User.register(newUser, u.password); // passport-local-mongoose handles hashing
       createdUsers.push(created);
     }
-    console.log("✅ Demo Users (with hashed passwords) added");
 
-    // --- BANK DETAILS (reference users) ---
-    const bankDetails = await BankDetails.insertMany([
-      {
-        user: createdUsers[0]._id,
-        accountHolder: "Rohit Sharma",
-        upiMobile: "9990001111",
-        plan: "Gold Plan",
-        amount: 1500,
-        verified: true,
-      },
-      {
-        user: createdUsers[1]._id,
-        accountHolder: "Priya Verma",
-        upiMobile: "8881112222",
-        plan: "Silver Plan",
-        amount: 1000,
-        verified: false,
-      },
-      {
-        user: createdUsers[2]._id,
-        accountHolder: "Aman Gupta",
-        upiMobile: "7773334444",
-        plan: "Platinum Plan",
-        amount: 2000,
-        verified: true,
-      },
-    ]);
-    console.log("✅ Demo Bank Details added");
+    console.log("✅ 50 Users (with hashed passwords) added");
 
-    // --- ADMINS (also register so password is hashed) ---
+    // --- BANK DETAILS ---
+    const bankRecords = createdUsers.map((user, index) => ({
+      user: user._id,
+      accountHolder: user.name,
+      upiMobile: user.number,
+      plan: user.plan === "full_time" ? "Gold Plan" : "Silver Plan",
+      amount: user.fees,
+      verified: index % 2 === 0,
+    }));
+
+    await BankDetails.insertMany(bankRecords);
+    console.log("✅ 50 Bank Details linked to users added");
+
+    // --- ADMINS ---
     const demoAdmins = [
       { data: { name: "Super Admin", mobile: "9999999999" }, password: "adminpass123" },
       { data: { name: "Staff Admin", mobile: "8888888888" }, password: "adminpass123" },
       { data: { name: "Finance Admin", mobile: "7777777777" }, password: "adminpass123" },
     ];
 
-    const createdAdmins = [];
     for (const a of demoAdmins) {
       const newAdmin = new Admin(a.data);
-      const createdAdmin = await Admin.register(newAdmin, a.password);
-      createdAdmins.push(createdAdmin);
+      await Admin.register(newAdmin, a.password);
     }
-    console.log("✅ Demo Admins (with hashed passwords) added");
+    console.log("✅ Demo Admins added");
 
     console.log("\n🎉 All demo data inserted successfully!");
-    console.log("Demo user credentials (number : password):");
-    demoUsers.forEach((u) => console.log(`${u.data.number} : ${u.password}`));
-    console.log("Demo admin credentials (mobile : password):");
-    demoAdmins.forEach((a) => console.log(`${a.data.mobile} : ${a.password}`));
+    console.log("Sample user credential (number : password):");
+    console.log(`${createdUsers[0].number} : password123`);
   } catch (error) {
     console.error("❌ Error inserting demo data:", error);
   } finally {

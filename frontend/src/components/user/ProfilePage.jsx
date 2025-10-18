@@ -145,7 +145,7 @@ const ProfilePage = () => {
               
               <div className="detail-item">
                 <span className="detail-label">Seat</span>
-                <span className="detail-value">{user.seat || "-"}</span>
+                <span className="detail-value">{user.seat.seatNo || "-"}</span>
               </div>
               
               <div className="detail-item">

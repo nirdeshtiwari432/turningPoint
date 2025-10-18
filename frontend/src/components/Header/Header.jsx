@@ -51,7 +51,7 @@ const Header = () => {
             {/* Admin Only Links */}
             {user?.role === "admin" && (
               <>
-                <li><Link to="/seats">Seats</Link></li>
+                
                 <li><Link to="/alerts">Alerts</Link></li>
               </>
             )}

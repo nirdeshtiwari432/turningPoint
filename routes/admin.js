@@ -4,7 +4,8 @@ const { isAdmin } = require("../middleware/auth");
 const adminController = require("../controllers/adminController");
 const updateExpiredFees = require("../middleware/updateFeeStatus")
 let is = (req,res,next)=>{
-  console.log(1)
+  console.log(req.body)
+
   next()
 }
 
@@ -45,5 +46,11 @@ router.get("/plans",  adminController.getPlans);
 router.post("/plans/addPlan", isAdmin, adminController.addPlan);
 router.put("/plans/:id", isAdmin, adminController.updatePlan);
 router.delete("/plans/:id", isAdmin, adminController.deletePlan);
+
+// Alert / Announcement Management
+router.get("/alerts", adminController.getAlerts);
+router.post("/alerts/addAlert", isAdmin,adminController.addAlert);
+router.put("/alerts/:id", isAdmin, adminController.updateAlert);
+router.delete("/alerts/:id", isAdmin, adminController.deleteAlert);
 
 module.exports = router;
