@@ -1,4 +1,4 @@
-const { User, AvailableSeat, BankDetails, Plan } = require("../models/index");
+const { User, AvailableSeat, BankDetails, Plan ,Alert} = require("../models/index");
 const passport = require("passport");
 require("dotenv").config();
 
@@ -207,4 +207,39 @@ exports.deletePlan = asyncHandler(async (req, res) => {
   const deleted = await Plan.findByIdAndDelete(id);
   if (!deleted) return res.status(404).json({ success: false, message: "Plan not found" });
   res.json({ success: true, message: "Plan deleted successfully" });
+});
+
+
+
+// ✅ Get all alerts
+exports.getAlerts = asyncHandler(async (req, res) => {
+  const alerts = await Alert.find().sort({ createdAt: -1 });
+  res.json({ success: true, alerts });
+});
+
+// ✅ Add a new alert
+exports.addAlert = asyncHandler(async (req, res) => {
+  const { title,description } = req.body;
+  
+  const alert = await Alert.create({ title,description });
+  
+  res.status(201).json({ success: true, alert });
+});
+
+// ✅ Update alert
+exports.updateAlert = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const updatedAlert = await Alert.findByIdAndUpdate(id, req.body, { new: true });
+  if (!updatedAlert)
+    return res.status(404).json({ success: false, message: "Alert not found" });
+  res.json({ success: true, updatedAlert });
+});
+
+// ✅ Delete alert
+exports.deleteAlert = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const deleted = await Alert.findByIdAndDelete(id);
+  if (!deleted)
+    return res.status(404).json({ success: false, message: "Alert not found" });
+  res.json({ success: true, message: "Alert deleted successfully" });
 });

@@ -3,7 +3,8 @@ const Admin = require("./admin");
 const Session = require("./session");
 const AvailableSeat = require("./availableSeat");
 const BankDetails = require("./BankDetails")
-const Plan = require("./Plan")
+const Plan = require("./Plan");
+const Alert = require("./Alert");
 
 module.exports = {
   User,
@@ -11,5 +12,6 @@ module.exports = {
   Session,
   AvailableSeat,
   BankDetails,
-  Plan
+  Plan,
+  Alert
 };

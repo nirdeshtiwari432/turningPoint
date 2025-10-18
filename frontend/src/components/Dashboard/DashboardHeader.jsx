@@ -30,6 +30,7 @@ const DashboardHeader = ({ children }) => {
     { path: "/unpaid", label: "Unpaid Member" },
     { path: "/plan", label: "Plan" },
     { path: "/seats", label: "Seat Details" },
+    { path: "/admin/alert",label:"Alert"},
   ];
 
   const isActive = (path) => location.pathname === path;

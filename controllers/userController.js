@@ -71,7 +71,7 @@ exports.userProfile = asyncHandler(async (req, res) => {
     return res.status(401).json({ success: false, message: "Not logged in" });
   }
 
-  const user = await User.findById(req.user._id).select("-hash -salt -__v");
+  const user = await User.findById(req.user._id).select("-hash -salt -__v").populate("seat");
   res.status(200).json({ success: true, user });
 });
 

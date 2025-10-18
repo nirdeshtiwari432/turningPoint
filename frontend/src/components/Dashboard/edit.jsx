@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DashboardHeader from "./DashboardHeader";
+import "./edit.css"
 
 const EditMemberPage = () => {
   const { id } = useParams();

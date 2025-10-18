@@ -2,38 +2,46 @@ import React, { useState, useEffect } from "react";
 import "./Alert.css";
 
 const Alerts = () => {
-  // Sample seat/member data
-  const seatsData = [
-    { seatNumber: "A01", name: "John Doe", endDate: "2024-09-30" },
-    { seatNumber: "A02", name: "Jane Smith", endDate: "2024-10-15" },
-    { seatNumber: "B01", name: "Sam Wilson", endDate: "2024-08-30" },
-  ];
-
   const [alerts, setAlerts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch alerts from backend
+  const fetchAlerts = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/admin/alerts", {
+        credentials: "include", // if your backend uses cookies/session
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAlerts(data.alerts);
+      }
+    } catch (err) {
+      console.error("Error fetching alerts:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const today = new Date();
-    const expiredMembers = seatsData.filter((seat) => {
-      const end = new Date(seat.endDate);
-      return end < today;
-    });
-    setAlerts(expiredMembers);
+    fetchAlerts();
   }, []);
 
   return (
     <div className="alerts-page">
       <h2>Member Alerts</h2>
       <div className="alerts-container">
-        {alerts.length > 0 ? (
-          alerts.map((member, index) => (
-            <div key={index} className="alert-card">
+        {loading ? (
+          <p>Loading alerts...</p>
+        ) : alerts.length > 0 ? (
+          alerts.map((alert) => (
+            <div key={alert._id} className="alert-card">
               <p>
-                🚨 <strong>{member.name}</strong> (Seat: {member.seatNumber}) membership has ended on <strong>{member.endDate}</strong>
+                🚨 <strong>{alert.title}</strong>: {alert.description}
               </p>
             </div>
           ))
         ) : (
-          <p className="no-alerts">No expired memberships today.</p>
+          <p className="no-alerts">No alerts available.</p>
         )}
       </div>
     </div>
