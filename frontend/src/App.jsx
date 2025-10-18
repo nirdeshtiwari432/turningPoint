@@ -26,6 +26,7 @@ import Unpaid from "./components/Dashboard/Unpaid/UnpaidPage.jsx";
 import NewMember from "./components/Dashboard/newmember.jsx";
 import Plan from "./components/Dashboard/plan/ManagePlans.jsx";
 import Alert from "./components/Dashboard/Alert/ManageAlerts.jsx";
+import Fees from "./components/Dashboard/Fees/Transactions.jsx"
 
 // Auth
 import ProtectedRoute from "./components/Dashboard/ProtectedRoute.jsx";
@@ -56,6 +57,7 @@ function App() {
         <Route path="/unpaid" element={<ProtectedRoute><Unpaid /></ProtectedRoute>} />
         <Route path="/admin/new/:seatId/:seatNo" element={<ProtectedRoute><NewMember /></ProtectedRoute>} />
         <Route path="/admin/alert" element={<ProtectedRoute><Alert /></ProtectedRoute>} />
+        <Route path="/admin/transactions" element={<ProtectedRoute><Fees /></ProtectedRoute>} />
         <Route path="/plan" element={<Plan />} />
       </Routes>
 

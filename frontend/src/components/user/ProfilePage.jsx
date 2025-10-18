@@ -145,8 +145,9 @@ const ProfilePage = () => {
               
               <div className="detail-item">
                 <span className="detail-label">Seat</span>
-                <span className="detail-value">{user.seat.seatNo || "-"}</span>
+                <span className="detail-value">{user.seat?.seatNo || "-"}</span>
               </div>
+
               
               <div className="detail-item">
                 <span className="detail-label">Email</span>
@@ -170,7 +171,7 @@ const ProfilePage = () => {
               
               <div className="detail-item">
                 <span className="detail-label">Fees Paid</span>
-                <span className="detail-value fee-amount">${user.feesPaid || "500"}</span>
+                <span className="detail-value fee-amount">{user.fees || "-"}</span>
               </div>
             </div>
           </div>

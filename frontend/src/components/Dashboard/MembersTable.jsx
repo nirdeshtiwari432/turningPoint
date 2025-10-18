@@ -1,17 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./MembersTable.css";
 
 const MembersTable = ({ members }) => {
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Filter members by name (case-insensitive)
+  const filteredMembers = members.filter((member) =>
+    member.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="members-table-container">
-      <div className="table-header">
+      <div className="table-header d-flex justify-content-between align-items-center">
         <h2>Our Members</h2>
+        <input
+          type="text"
+          className="form-control w-25"
+          placeholder="Search by name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
 
-      {members.length === 0 ? (
+      {filteredMembers.length === 0 ? (
         <div className="no-members-message">
           <p>No members found.</p>
         </div>
@@ -30,14 +43,20 @@ const MembersTable = ({ members }) => {
               </tr>
             </thead>
             <tbody>
-              {members.map((member, index) => (
+              {filteredMembers.map((member, index) => (
                 <tr key={member._id}>
                   <td className="text-center">{index + 1}</td>
                   <td className="fw-semibold">{member.name || "—"}</td>
                   <td>{member.email || "—"}</td>
                   <td>{member.number || "—"}</td>
                   <td>
-                    <span className={`badge ${member.membershipType === 'reserved' ? 'bg-primary' : 'bg-secondary'}`}>
+                    <span
+                      className={`badge ${
+                        member.membershipType === "reserved"
+                          ? "bg-primary"
+                          : "bg-secondary"
+                      }`}
+                    >
                       {member.membershipType || "—"}
                     </span>
                   </td>
