@@ -20,7 +20,13 @@ const BankDetailsTable = () => {
         if (!response.ok) throw new Error("Network response was not ok");
 
         const data = await response.json();
-        setBankDetails(data);
+
+        // ✅ Sort by newest submission first (descending order)
+        const sortedData = data.sort(
+          (a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)
+        );
+
+        setBankDetails(sortedData);
         setLoading(false);
       } catch (err) {
         setError("Failed to fetch bank details");

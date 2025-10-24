@@ -100,7 +100,13 @@ const UserDetailsCard = ({ user }) => {
 
         {/* Tab Content */}
         <div className="tab-content">
-          <img src={user.profilePic || "https://via.placeholder.com/150"} alt="Profile" />
+          <div className="profile-image">
+                   <img
+                        src={user.profilePic || "https://via.placeholder.com/150"}
+                        alt="Profile"
+                   />
+          </div>
+          <br />  
           {activeTab === "contact" && (
             <div className="contact-info">
               <div className="info-card">
@@ -112,12 +118,7 @@ const UserDetailsCard = ({ user }) => {
                   <span className="info-label">Email</span>
                   <span className="info-value">{user.email || "N/A"}</span>
                 </div>
-                <div className="info-item">
-                  <span className="info-label">Address</span>
-                  <span className="info-value">
-                    {user.address || "123 Main St, Anytown USA"}
-                  </span>
-                </div>
+                
               </div>
             </div>
           )}

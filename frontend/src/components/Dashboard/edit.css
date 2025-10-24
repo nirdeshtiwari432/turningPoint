@@ -1,106 +1,59 @@
-/* General page background */
 .bg-light {
-  background-color: #f8f9fa;
   min-height: 100vh;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  background: #f5f7fa;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 2rem;
 }
 
-/* Card container */
-.card {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin: 20px auto;
-  max-width: 700px;
-}
-
-/* Card header */
-.card h2 {
-  margin-bottom: 20px;
-  font-size: 1.8rem;
-  color: #333;
-  text-align: center;
-}
-
-/* Form labels */
-.form-label {
-  font-weight: 600;
-  color: #555;
-}
-
-/* Form input fields */
-.form-control {
+.edit-card {
   width: 100%;
-  padding: 10px 12px;
-  border-radius: 6px;
+  max-width: 800px;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin-top: 1rem;
+}
+
+.edit-card h2 {
+  text-align: center;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 1.5rem;
+}
+
+.form-control {
+  border-radius: 8px;
   border: 1px solid #ccc;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
 }
 
 .form-control:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+  border-color: #198754;
+  box-shadow: 0 0 5px rgba(25, 135, 84, 0.3);
 }
 
-/* Form spacing */
-.mb-3 {
-  margin-bottom: 15px;
-}
-
-/* Buttons */
 .btn {
-  padding: 10px 16px;
-  font-size: 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  border: none;
-  transition: background 0.3s ease;
+  border-radius: 8px;
+  font-weight: 500;
 }
 
 .btn-success {
-  background-color: #28a745;
-  color: #fff;
+  background-color: #198754;
 }
 
 .btn-success:hover {
-  background-color: #218838;
-}
-
-.btn-secondary {
-  background-color: #6c757d;
-  color: #fff;
+  background-color: #157347;
 }
 
 .btn-secondary:hover {
-  background-color: #5a6268;
+  background-color: #5c636a;
 }
 
-.me-2 {
-  margin-right: 10px;
-}
-
-/* Loading / text center */
-.text-center {
-  text-align: center;
-}
-
-.my-4 {
-  margin: 20px 0;
-}
-
-/* Responsive adjustments */
 @media (max-width: 768px) {
-  .card {
-    padding: 15px;
-    margin: 10px;
-  }
-
-  .btn {
-    width: 100%;
-    margin-bottom: 10px;
+  .edit-card {
+    margin: 1rem;
+    padding: 1.2rem;
   }
 }

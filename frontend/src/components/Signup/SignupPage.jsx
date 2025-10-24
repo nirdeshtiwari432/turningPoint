@@ -19,7 +19,13 @@ const SignupPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+
+    // If plan changes and is not part_time, reset shift to full
+    if (name === "plan" && value !== "part_time") {
+      setForm({ ...form, [name]: value, shift: "full" });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -42,7 +48,7 @@ const SignupPage = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
-        credentials: "include", // send session cookies
+        credentials: "include",
       });
 
       const data = await res.json();
@@ -59,7 +65,6 @@ const SignupPage = () => {
           password: "",
         });
 
-        // Redirect to profile
         navigate("/user/profile");
       } else {
         setMessage(`❌ ${data.error || "Something went wrong"}`);
@@ -79,7 +84,11 @@ const SignupPage = () => {
         <p className="subtitle">Sign up to get started</p>
 
         {message && (
-          <div className={`alert ${message.startsWith("✅") ? "alert-success" : "alert-danger"}`}>
+          <div
+            className={`alert ${
+              message.startsWith("✅") ? "alert-success" : "alert-danger"
+            }`}
+          >
             {message}
           </div>
         )}
@@ -89,31 +98,64 @@ const SignupPage = () => {
             {/* Name */}
             <div className="form-group">
               <label>Name *</label>
-              <input type="text" name="name" value={form.name} onChange={handleChange} placeholder="Enter your full name" required />
+              <input
+                type="text"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="Enter your full name"
+                required
+              />
             </div>
 
             {/* Email */}
             <div className="form-group">
               <label>Email</label>
-              <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="Enter your email" />
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="Enter your email"
+              />
             </div>
 
             {/* Number */}
             <div className="form-group">
               <label>Mobile Number *</label>
-              <input type="text" name="number" value={form.number} onChange={handleChange} placeholder="Enter 10-digit number" maxLength={10} required />
+              <input
+                type="text"
+                name="number"
+                value={form.number}
+                onChange={handleChange}
+                placeholder="Enter 10-digit number"
+                maxLength={10}
+                required
+              />
             </div>
 
             {/* Password */}
             <div className="form-group">
               <label>Password *</label>
-              <input type="password" name="password" value={form.password} onChange={handleChange} placeholder="Enter your password" required />
+              <input
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="Enter your password"
+                required
+              />
             </div>
 
             {/* Membership Type */}
             <div className="form-group">
               <label>Membership Type *</label>
-              <select name="membershipType" value={form.membershipType} onChange={handleChange} required>
+              <select
+                name="membershipType"
+                value={form.membershipType}
+                onChange={handleChange}
+                required
+              >
                 <option value="">Select type</option>
                 <option value="reserved">Reserved</option>
                 <option value="non_reserved">Non Reserved</option>
@@ -123,22 +165,34 @@ const SignupPage = () => {
             {/* Plan */}
             <div className="form-group">
               <label>Plan *</label>
-              <select name="plan" value={form.plan} onChange={handleChange} required>
+              <select
+                name="plan"
+                value={form.plan}
+                onChange={handleChange}
+                required
+              >
                 <option value="">Select plan</option>
                 <option value="full_time">Full Time</option>
                 <option value="part_time">Part Time</option>
               </select>
             </div>
 
-            {/* Shift */}
-            <div className="form-group">
-              <label>Shift *</label>
-              <select name="shift" value={form.shift} onChange={handleChange} required>
-                <option value="morning">Morning</option>
-                <option value="night">Night</option>
-                <option value="full">Full</option>
-              </select>
-            </div>
+            {/* Conditionally show Shift only if plan is Part Time */}
+            {form.plan === "part_time" && (
+              <div className="form-group">
+                <label>Shift *</label>
+                <select
+                  name="shift"
+                  value={form.shift}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select shift</option>
+                  <option value="morning">Morning</option>
+                  <option value="night">Night</option>
+                </select>
+              </div>
+            )}
           </div>
 
           <button type="submit" className="btn primary" disabled={loading}>
