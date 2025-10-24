@@ -1,3 +1,26 @@
+/* Profile image container */
+.profile-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Profile image itself */
+.profile-image img {
+  width: 120px;          /* adjust size (you can make it 80px or 100px if smaller) */
+  height: 120px;
+  object-fit: cover;      /* keeps aspect ratio while filling the circle */
+  border-radius: 50%;     /* makes it round */
+  border: 3px solid #198754;  /* green border for style */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+/* Optional hover effect */
+.profile-image img:hover {
+  transform: scale(1.05);
+}
 /* ===== User Details Card Layout ===== */
 .dashboard-container {
   display: flex;

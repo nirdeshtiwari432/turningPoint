@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DashboardHeader from "./DashboardHeader";
-import "./edit.css"
+import "./edit.css";
 
 const EditMemberPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -33,7 +34,7 @@ const EditMemberPage = () => {
           membershipType: data.membershipType || "",
           plan: data.plan || "",
           shift: data.shift || "",
-          seatNo: data.seatNo || "", // ✅ Added seatNo
+          seatNo: data.seatNo || "",
           fees: data.fees || "",
           startDate: data.startDate ? data.startDate.split("T")[0] : "",
           endDate: data.endDate ? data.endDate.split("T")[0] : "",
@@ -60,10 +61,10 @@ const EditMemberPage = () => {
       });
 
       if (res.ok) {
-        alert("Member updated successfully ✅");
+        alert("✅ Member updated successfully");
         navigate(`/members/${id}`);
       } else {
-        alert("Failed to update member ❌");
+        alert("❌ Failed to update member");
       }
     } catch (err) {
       console.error("Update error:", err);
@@ -72,136 +73,150 @@ const EditMemberPage = () => {
   };
 
   return (
-    <div className="bg-light">
-      <DashboardHeader />
-      <div className="card w-100">
-        <h2>Edit Member</h2>
-        <form onSubmit={handleSubmit} className="card p-4">
-          <div className="mb-3">
-            <label className="form-label">Name</label>
-            <input
-              type="text"
-              className="form-control"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
+    <DashboardHeader>
+      <div className="bg-light">
+        <div className="card edit-card">
+          <h2>Edit Member</h2>
 
-          <div className="mb-3">
-            <label className="form-label">Email</label>
-            <input
-              type="email"
-              className="form-control"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </div>
+          <form onSubmit={handleSubmit}>
+            {/* Name */}
+            <div className="mb-3">
+              <label className="form-label">Name</label>
+              <input
+                type="text"
+                className="form-control"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-          <div className="mb-3">
-            <label className="form-label">Number</label>
-            <input
-              type="text"
-              className="form-control"
-              name="number"
-              value={formData.number}
-              onChange={handleChange}
-            />
-          </div>
+            {/* Email */}
+            <div className="mb-3">
+              <label className="form-label">Email</label>
+              <input
+                type="email"
+                className="form-control"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </div>
 
-          <div className="mb-3">
-            <label className="form-label">Membership Type</label>
-            <input
-              type="text"
-              className="form-control"
-              name="membershipType"
-              value={formData.membershipType}
-              onChange={handleChange}
-            />
-          </div>
+            {/* Number */}
+            <div className="mb-3">
+              <label className="form-label">Number</label>
+              <input
+                type="text"
+                className="form-control"
+                name="number"
+                value={formData.number}
+                onChange={handleChange}
+              />
+            </div>
 
-          <div className="mb-3">
-            <label className="form-label">Plan</label>
-            <input
-              type="text"
-              className="form-control"
-              name="plan"
-              value={formData.plan}
-              onChange={handleChange}
-            />
-          </div>
+            {/* Membership Type */}
+            <div className="mb-3">
+              <label className="form-label">Membership Type</label>
+              <input
+                type="text"
+                className="form-control"
+                name="membershipType"
+                value={formData.membershipType}
+                onChange={handleChange}
+              />
+            </div>
 
-          {/* ✅ New Seat Number Field */}
-          <div className="mb-3">
-            <label className="form-label">Seat Number</label>
-            <input
-              type="text"
-              className="form-control"
-              name="seatNo"
-              value={formData.seatNo}
-              onChange={handleChange}
-            />
-          </div>
+            {/* Plan */}
+            <div className="mb-3">
+              <label className="form-label">Plan</label>
+              <input
+                type="text"
+                className="form-control"
+                name="plan"
+                value={formData.plan}
+                onChange={handleChange}
+              />
+            </div>
 
-          <div className="mb-3">
-            <label className="form-label">Shift</label>
-            <input
-              type="text"
-              className="form-control"
-              name="shift"
-              value={formData.shift}
-              onChange={handleChange}
-            />
-          </div>
+            {/* Seat No */}
+            <div className="mb-3">
+              <label className="form-label">Seat Number</label>
+              <input
+                type="text"
+                className="form-control"
+                name="seatNo"
+                value={formData.seatNo}
+                onChange={handleChange}
+              />
+            </div>
 
-          <div className="mb-3">
-            <label className="form-label">Fees</label>
-            <input
-              type="number"
-              className="form-control"
-              name="fees"
-              value={formData.fees}
-              onChange={handleChange}
-            />
-          </div>
+            {/* Shift */}
+            <div className="mb-3">
+              <label className="form-label">Shift</label>
+              <input
+                type="text"
+                className="form-control"
+                name="shift"
+                value={formData.shift}
+                onChange={handleChange}
+              />
+            </div>
 
-          <div className="mb-3">
-            <label className="form-label">Start Date</label>
-            <input
-              type="date"
-              className="form-control"
-              name="startDate"
-              value={formData.startDate}
-              onChange={handleChange}
-            />
-          </div>
+            {/* Fees */}
+            <div className="mb-3">
+              <label className="form-label">Fees</label>
+              <input
+                type="number"
+                className="form-control"
+                name="fees"
+                value={formData.fees}
+                onChange={handleChange}
+              />
+            </div>
 
-          <div className="mb-3">
-            <label className="form-label">End Date</label>
-            <input
-              type="date"
-              className="form-control"
-              name="endDate"
-              value={formData.endDate}
-              onChange={handleChange}
-            />
-          </div>
+            {/* Dates */}
+            <div className="row">
+              <div className="col-md-6 mb-3">
+                <label className="form-label">Start Date</label>
+                <input
+                  type="date"
+                  className="form-control"
+                  name="startDate"
+                  value={formData.startDate}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="col-md-6 mb-3">
+                <label className="form-label">End Date</label>
+                <input
+                  type="date"
+                  className="form-control"
+                  name="endDate"
+                  value={formData.endDate}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
 
-          <button type="submit" className="btn btn-success me-2">
-            Update
-          </button>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => navigate(`/members/${id}`)}
-          >
-            Cancel
-          </button>
-        </form>
+            {/* Buttons */}
+            <div className="d-flex justify-content-end">
+              <button type="submit" className="btn btn-success me-2">
+                Update
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => navigate(`/members/${id}`)}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </DashboardHeader>
   );
 };
 

@@ -89,7 +89,7 @@ const Seat = () => {
                             <td className="text-center fw-bold">{seat.seatNo}</td>
                             <td>{seat.isBooked ? "Yes" : "No"}</td>
                             <td>{seat.bookedBy?.name || "-"}</td>
-                            <td>{seat.timing?.replace("_", " ") || "-"}</td>
+                            <td>{seat.bookedBy?.shift.replace("_", " ") || "-"}</td>
                             <td>
                               <button
                                 className="btn btn-primary btn-sm"

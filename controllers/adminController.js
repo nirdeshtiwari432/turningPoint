@@ -159,6 +159,7 @@ exports.getSeats = asyncHandler(async (req, res) => {
   else if (filter === "notRegistered") query.bookedBy = null;
 
   const seats = await AvailableSeat.find(query).populate("bookedBy");
+  
   res.json({ seats, filter });
 });
 
@@ -204,6 +205,7 @@ exports.varify = asyncHandler(async (req, res) => {
   if (!user) return res.status(404).json({ message: "User not found" });
 
   user.feeStatus = true;
+  user.fees = bankDetail.amount;
   await user.save();
 
   res.status(200).json({ message: "Verification successful", bankDetail, user });
