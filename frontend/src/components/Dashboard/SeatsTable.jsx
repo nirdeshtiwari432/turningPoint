@@ -54,27 +54,42 @@ const SeatsTable = ({ seats, filter, setFilter }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {seats.map((seat) => (
-                    <tr key={seat._id}>
-                      <td className="text-center fw-bold">{seat.seatNo}</td>
-                      <td>
-                        <span className={`status-badge ${seat.isBooked ? 'booked' : 'available'}`}>
-                          {seat.isBooked ? 'Booked' : 'Available'}
-                        </span>
-                      </td>
-                      <td>{seat.bookedBy?.name || "-"}</td>
-                      <td>{seat.timing?.replace(/_/g, " ") || "-"}</td>
-                      <td>
-                        <button
-                          className={`action-btn ${seat.isBooked ? 'booked' : 'available'}`}
-                          onClick={() => handleBook(seat._id, seat.seatNo)}
-                          disabled={seat.isBooked}
-                        >
-                          {seat.isBooked ? 'Booked' : 'Book'}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {seats.map((seat) => {
+                    const bookedUsers = seat.bookedBy || [];
+                    const isBooked = bookedUsers.length > 0;
+
+                    return (
+                      <tr key={seat._id}>
+                        <td className="text-center fw-bold">{seat.seatNo}</td>
+                        <td>
+                          <span className={`status-badge ${isBooked ? 'booked' : 'available'}`}>
+                            {isBooked ? 'Booked' : 'Available'}
+                          </span>
+                        </td>
+                        <td>
+                          {bookedUsers.length > 0 ? (
+                            bookedUsers.map((b, idx) => (
+                              <div key={idx}>
+                                {b.user?.name || "Unknown"} ({b.shift?.replace(/_/g, " ")})
+                              </div>
+                            ))
+                          ) : (
+                            "-"
+                          )}
+                        </td>
+                        <td>{seat.timing?.replace(/_/g, " ") || "-"}</td>
+                        <td>
+                          <button
+                            className={`action-btn ${isBooked ? 'booked' : 'available'}`}
+                            onClick={() => handleBook(seat._id, seat.seatNo)}
+                            disabled={isBooked}
+                          >
+                            {isBooked ? 'Booked' : 'Book'}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

@@ -40,7 +40,7 @@ const Seat = () => {
             <p className="page-subtitle">Manage seat bookings</p>
           </div>
         </div>
-        
+
         <div className="content-section">
           <div className="table-card">
             <div className="card-header">
@@ -48,7 +48,7 @@ const Seat = () => {
                 <div>
                   <h3 className="card-title">Seat Booking Status</h3>
                   <p className="card-subtitle">
-                    Total {seats.length} seat{seats.length !== 1 ? 's' : ''}
+                    Total {seats.length} seat{seats.length !== 1 ? "s" : ""}
                   </p>
                 </div>
                 <select
@@ -78,29 +78,46 @@ const Seat = () => {
                         <th>SEAT NO</th>
                         <th>IS BOOKED</th>
                         <th>BOOKED BY</th>
-                        <th>TIMING</th>
+                        <th>SHIFT</th>
                         <th>ACTION</th>
                       </tr>
                     </thead>
                     <tbody>
                       {seats.length > 0 ? (
-                        seats.map((seat) => (
-                          <tr key={seat._id}>
-                            <td className="text-center fw-bold">{seat.seatNo}</td>
-                            <td>{seat.isBooked ? "Yes" : "No"}</td>
-                            <td>{seat.bookedBy?.name || "-"}</td>
-                            <td>{seat.bookedBy?.shift.replace("_", " ") || "-"}</td>
-                            <td>
-                              <button
-                                className="btn btn-primary btn-sm"
-                                onClick={() => handleBook(seat._id, seat.seatNo)}
-                                disabled={seat.isBooked}
-                              >
-                                {seat.isBooked ? "Booked" : "Book"}
-                              </button>
-                            </td>
-                          </tr>
-                        ))
+                        seats.map((seat) => {
+                          const bookedUsers = seat.bookedBy || [];
+                          const isBooked = bookedUsers.length > 0;
+
+                          return (
+                            <tr key={seat._id}>
+                              <td className="text-center fw-bold">{seat.seatNo}</td>
+                              <td>{isBooked ? "Yes" : "No"}</td>
+                              <td>
+                                {bookedUsers.length > 0
+                                  ? bookedUsers.map((b, idx) => (
+                                      <div key={idx}>{b.user?.name || "Unknown"}</div>
+                                    ))
+                                  : "-"}
+                              </td>
+                              <td>
+                                {bookedUsers.length > 0
+                                  ? bookedUsers.map((b, idx) => (
+                                      <div key={idx}>{b.shift?.replace("_", " ") || "-"}</div>
+                                    ))
+                                  : "-"}
+                              </td>
+                              <td>
+                                <button
+                                  className="btn btn-primary btn-sm"
+                                  onClick={() => handleBook(seat._id, seat.seatNo)}
+                                  disabled={isBooked}
+                                >
+                                  {isBooked ? "Booked" : "Book"}
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })
                       ) : (
                         <tr>
                           <td colSpan="5" className="text-center py-4">
